@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Shopee Commissions Analyzer • Painel</title>
+  <link rel="icon" href="favicon.ico">
+
+  <!-- FONTS -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background: #0e1b1f;
+      color: #fff;
+    }
+
+    #loading {
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #bdbdbd;
+    }
+
+    header {
+      height: 64px;
+      background: #0f0f0f;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 28px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.45);
+    }
+
+    header img { height: 34px; }
+
+    header button {
+      background: none;
+      border: 1px solid #43d68c;
+      color: #43d68c;
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .layout {
+      display: flex;
+      height: calc(100vh - 64px);
+    }
+
+    .sidebar {
+      width: 220px;
+      background: #0f0f0f;
+      padding: 24px 18px;
+      border-right: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .sidebar h3 {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #9e9e9e;
+      margin-bottom: 14px;
+    }
+
+    .sidebar a {
+      display: block;
+      padding: 10px 12px;
+      border-radius: 8px;
+      color: #dcdcdc;
+      text-decoration: none;
+      margin-bottom: 6px;
+      font-size: 14px;
+    }
+
+    .sidebar a.active,
+    .sidebar a:hover {
+      background: rgba(67,214,140,0.15);
+      color: #43d68c;
+    }
+
+    main {
+      flex: 1;
+      padding: 36px;
+      overflow-y: auto;
+    }
+
+    .page-title {
+      font-family: 'Poppins', sans-serif;
+      font-size: 40px;
+    }
+
+    .page-subtitle {
+      font-family: 'Poppins', sans-serif;
+      font-size: 20px;
+      color: #bdbdbd;
+      margin-bottom: 30px;
+    }
+
+    .upload-box {
+      background: #0f0f0f;
+      padding: 24px;
+      border-radius: 16px;
+      max-width: 520px;
+    }
+
+.progress-container {
+  width: 100%;
+  height: 18px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 20px;
+  margin-top: 12px;
+  overflow: hidden;
+}
+
+.progress-bar {
+  position: relative;
+  height: 100%;
+  width: 0%;
+  border-radius: 20px;
+  overflow: hidden;
+  transition: width 0.4s ease;
+}
+
+/* Fundo animado */
+.progress-bar::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    #43d68c 0%,
+    #2bb673 25%,
+    #43d68c 50%,
+    #2bb673 75%,
+    #43d68c 100%
+  );
+  background-size: 200% 100%;
+  animation: gradientMove 2s linear infinite;
+}
+
+/* Efeito brilho passando */
+.progress-bar::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -50%;
+  height: 100%;
+  width: 50%;
+  background: linear-gradient(
+    120deg,
+    rgba(255,255,255,0.2),
+    rgba(255,255,255,0.6),
+    rgba(255,255,255,0.2)
+  );
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes gradientMove {
+  0% { background-position: 0% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes shimmer {
+  0% { left: -50%; }
+  100% { left: 150%; }
+}
+
+#progressText {
+  position: absolute;
+  width: 100%;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: #0f0f0f;
+  z-index: 2;
+}
+
+
+
+    button.import {
+      margin-top: 16px;
+      background: #43d68c;
+      border: none;
+      color: #0f0f0f;
+      padding: 10px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .status {
+      margin-top: 12px;
+      font-size: 14px;
+      opacity: .85;
+    }
+  </style>
+</head>
+
+<body>
+
+<div id="loading">Verificando acesso...</div>
+
+<div id="app" style="display:none;">
+
+  <header>
+    <img src="logo.png">
+    <button id="logoutBtn">Sair</button>
+  </header>
+
+  <div class="layout">
+
+    <aside class="sidebar">
+      <h3>Painel</h3>
+      <a class="active">Importar</a>
+      <a href="dashboard.html">Dashboard</a>
+      <a>Configurações</a>   
+    </aside>
+
+    <main>
+      <div class="page-title">Importação</div>
+      <div class="page-subtitle">Importação de comissões da Shopee</div>
+
+      <div class="upload-box">
+        <strong>📤 Importar CSV da Shopee</strong><br><br>
+        <input type="file" id="csvFile" accept=".csv"><br>
+        <button class="import" id="importBtn">Importar arquivo</button>
+        <div class="status" id="status"></div>
+          <!-- BARRA DE PROGRESSO -->
+        <div class="progress-container" id="progressContainer" style="display:none;">
+          <div class="progress-bar" id="progressBar">
+            <span id="progressText">0%</span>
+          </div>
+        </div>
+
+    </main>
+
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+
+<script>
+  const supabaseUrl = "https://miudgbuwxwvszdunlifw.supabase.co"
+  const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1pdWRnYnV3eHd2c3pkdW5saWZ3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk1NTMxODUsImV4cCI6MjA4NTEyOTE4NX0.WtelQveBTVlhR0BLb6ke9xb2i0a3ocfsPjKDupR1KRM"
+const progressContainer = document.getElementById("progressContainer");
+const progressBar = document.getElementById("progressBar");
+const progressText = document.getElementById("progressText");
+const status = document.getElementById("status");
+
+const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+let currentUser = null;
+
+async function checkAuth() {
+  const { data } = await supabaseClient.auth.getSession();
+  if (!data.session) {
+    window.location.href = "index.html";
+    return;
+  }
+  currentUser = data.session.user;
+  loading.style.display = "none";
+  app.style.display = "block";
+}
+checkAuth();
+
+logoutBtn.onclick = async () => {
+  await supabaseClient.auth.signOut();
+  window.location.href = "index.html";
+};
+
+importBtn.onclick = async () => {
+  const file = csvFile.files[0];
+  if (!file) return alert("Selecione um CSV");
+
+  status.innerText = "Lendo arquivo...";
+
+  Papa.parse(file, {
+    header: true,
+    skipEmptyLines: true,
+    delimiter: ",",
+    quoteChar: '"',
+    dynamicTyping: false,
+    complete: async function(results) {
+      const headers = results.meta.fields.map(h => h.trim().toLowerCase());
+
+      const find = keys =>
+        headers.findIndex(h => keys.some(k => h.includes(k)));
+
+      const col = {
+        pedido: find(["id do pedido"]),
+        status: find(["status do pedido"]),
+        data: find(["horário do pedido"]),
+        valor: find(["valor de compra"]),
+        comissao: find(["comissão líquida do afiliado"]),
+        canal: find(["canal"]),
+        sub1: find(["sub_id1"]),
+        sub2: find(["sub_id2"]),
+        sub3: find(["sub_id3"]),
+        sub4: find(["sub_id4"]),
+        modelo: find(["modelo de id"]),
+        qtd: find(["qtd"]),
+        sub5: find(["sub_id5"])
+      };
+
+function parseNumber(value) {
+  if (!value) return 0;
+
+  if (typeof value === "number") return value;
+
+  let str = value.toString().trim();
+
+  // Caso brasileiro: 1.234,56
+  if (str.includes(",") && str.includes(".")) {
+    str = str.replace(/\./g, "").replace(",", ".");
+  }
+  // Caso só vírgula: 65,99
+  else if (str.includes(",")) {
+    str = str.replace(",", ".");
+  }
+  // Caso já esteja no padrão 15.34 → não mexe
+
+  return parseFloat(str) || 0;
+}
+
+
+function parseDateFlexible(str) {
+  if (!str) return null;
+
+  if (str.includes("/")) {
+    const [dia, mes, anoHora] = str.split("/");
+    const [ano, hora] = anoHora.split(" ");
+    return `${ano}-${mes}-${dia}T${hora || "00:00:00"}`;
+  }
+
+  if (str.includes("-")) {
+    return str.replace(" ", "T");
+  }
+
+  return null;
+}
+
+
+/*
+      function parseDateFlexible(str) {
+        if (!str) return null;
+        if (str.includes("/")) {
+          const [dia, mes, anoHora] = str.split("/");
+          const [ano, hora] = anoHora.split(" ");
+          return new Date(`${ano}-${mes}-${dia}${hora ? "T"+hora : ""}`);
+        }
+        if (str.includes("-")) {
+          return new Date(str.replace(" ", "T"));
+        }
+        return null;
+      }
+*/
+      
+      const { data, error } = await supabaseClient 
+        .from("dados_arquivo") 
+        .select("nr_importacao", { count: "exact" }) 
+        .order("nr_importacao", { ascending: false }) 
+        .limit(1);
+      if (error) { console.error(error); return; }
+      const ultimoImportacao = data.length ? data[0].nr_importacao : 0; 
+      const nrImportacao = ultimoImportacao + 1;
+      const registros = [];
+
+      results.data.forEach(row => {
+        console.log("DATA:", parseDateFlexible(row[results.meta.fields[col.data]]));
+        registros.push({
+          nr_importacao: nrImportacao,
+          id_usuario: currentUser.id,
+          dt_importacao: new Date(),
+
+          id_pedido: col.pedido >= 0 ? row[results.meta.fields[col.pedido]] : null,
+          ds_status_pedido: col.status >= 0 ? row[results.meta.fields[col.status]] : null,
+
+          dt_pedido: col.data >= 0
+            ? parseDateFlexible(row[results.meta.fields[col.data]])
+            : null,
+
+          vl_pedido: col.valor >= 0
+            ? parseNumber(row[results.meta.fields[col.valor]])
+            : 0,
+
+          vl_comissao: col.comissao >= 0
+            ? parseNumber(row[results.meta.fields[col.comissao]])
+            : 0,
+
+          ds_subid_1: col.sub1 >= 0 ? row[results.meta.fields[col.sub1]] : null,
+          ds_subid_2: col.sub2 >= 0 ? row[results.meta.fields[col.sub2]] : null,
+          ds_subid_3: col.sub3 >= 0 ? row[results.meta.fields[col.sub3]] : null,
+          ds_subid_4: col.sub4 >= 0 ? row[results.meta.fields[col.sub4]] : null,
+          ds_subid_5: col.sub5 >= 0 ? row[results.meta.fields[col.sub5]] : null,
+          modelo_id: col.modelo >= 0 ? row[results.meta.fields[col.modelo]]: null,
+          qtd_item: col.qtd >= 0 ? row[results.meta.fields[col.qtd]]: null,
+          ds_canal: col.canal >= 0 ? row[results.meta.fields[col.canal]] : null
+        });
+      });
+
+      if (!registros.length) {
+        status.innerText = "Nenhum registro válido encontrado.";
+        return;
+      }
+
+     status.innerText = "Salvando no banco...";
+
+const batchSize = 500;
+const maxParallel = 3;
+
+let total = registros.length;
+let enviados = 0;
+
+function criarLotes(array, size) {
+  const lotes = [];
+  for (let i = 0; i < array.length; i += size) {
+    lotes.push(array.slice(i, i + size));
+  }
+  return lotes;
+}
+
+const lotes = criarLotes(registros, batchSize);
+progressContainer.style.display = "block";
+progressBar.style.width = "0%";
+let finalizado = false;
+async function processarLotes() {
+  let index = 0;
+
+  async function worker() {
+    while (index < lotes.length) {
+      const currentIndex = index++;
+      const batch = lotes[currentIndex];
+
+      const { error } = await supabaseClient
+        .from("dados_arquivo")
+        .upsert(batch, { 
+          onConflict: "id_usuario,id_pedido,modelo_id" 
+        });
+
+      if (error) {
+        console.error(error);
+        throw error;
+      }
+
+      enviados += batch.length;
+      const percent = Math.round((enviados / total) * 100);
+      progressBar.style.width = percent + "%";
+      progressText.innerText = percent + "%";
+      if (!finalizado) {
+        status.innerText = `Salvando no banco... ${percent}%`;
+      }
+
+    }
+  }
+
+  const workers = [];
+  for (let i = 0; i < maxParallel; i++) {
+    workers.push(worker());
+  }
+
+  await Promise.all(workers);
+}
+
+try {
+  await processarLotes();
+  finalizado = true;
+  progressBar.style.width = "100%";
+  progressText.innerText = "✔ Concluído";
+  status.innerText = `Importação concluída (${total} registros).`;
+
+  setTimeout(() => {window.location.href = "dashboard.html";}, 1500);
+} catch (err) {
+  status.innerText = "Erro ao salvar dados.";
+}
+       
+    }
+  });
+};
+
+</script>
+
+</body>
+</html>

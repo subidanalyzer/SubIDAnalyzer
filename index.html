@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Shopee Commissions Analyzer</title>
+  <link rel="icon" href="favicon.ico">
+
+  <!-- FONTS -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at top, #1f3c44, #0e1b1f);
+      font-family: 'Inter', sans-serif;
+      color: #fff;
+    }
+
+    .login-card {
+      background: #0f0f0f;
+      padding: 40px;
+      border-radius: 16px;
+      width: 360px;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    }
+
+    .login-card h1 {
+      font-family: 'Poppins', sans-serif;
+      font-size: 26px;
+      margin-bottom: 10px;
+    }
+
+    .login-card h1 span {
+      color: #43d68c;
+    }
+
+    .subtitle {
+      font-size: 14px;
+      color: #bdbdbd;
+      margin-bottom: 25px;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 15px;
+      border-radius: 8px;
+      border: none;
+      outline: none;
+      background: #1c1c1c;
+      color: #fff;
+      font-size: 14px;
+    }
+
+    input::placeholder {
+      color: #888;
+    }
+
+    .password-wrapper {
+      position: relative;
+    }
+
+    .password-wrapper button {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+      color: #aaa;
+    }
+
+    .login-btn {
+      width: 100%;
+      padding: 12px;
+      background: #43d68c;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .login-btn:hover {
+      background: #35c57b;
+    }
+
+    .msg {
+      margin-top: 12px;
+      font-size: 13px;
+      color: #ff6b6b;
+    }
+
+    .secure {
+      display: block;
+      margin-top: 15px;
+      font-size: 12px;
+      color: #9e9e9e;
+    }
+    .login-logo {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 18px;
+}
+
+.login-logo img {
+  
+  
+  height: auto;
+}
+.login-logo img {
+  filter: drop-shadow(0 4px 10px rgba(0,0,0,0.35));
+}
+
+  </style>
+</head>
+
+<body>
+  
+  <div class="login-card">
+    <h1>Shopee <span>Commissions</span> Analyzer</h1>
+    <p class="subtitle">
+      Analise suas comissões por dia, origem e SubID de forma simples e clara.
+    </p>
+
+    <input type="email" id="email" placeholder="Seu email">
+
+    <div class="password-wrapper">
+      <input type="password" id="password" placeholder="Sua senha">
+      <button type="button" id="togglePassword">👁</button>
+    </div>
+
+    <button class="login-btn" id="loginBtn">
+      Entrar no painel
+    </button>
+
+    <div class="msg" id="msg"></div>
+
+    <small class="secure">
+      🔒 Acesso seguro • Dados protegidos
+    </small>
+  </div>
+
+  <!-- SUPABASE SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script>
+    // 🔴 SUAS CREDENCIAIS (anon key pode ficar no front)
+    const supabaseUrl = "https://miudgbuwxwvszdunlifw.supabase.co"
+    const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1pdWRnYnV3eHd2c3pkdW5saWZ3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk1NTMxODUsImV4cCI6MjA4NTEyOTE4NX0.WtelQveBTVlhR0BLb6ke9xb2i0a3ocfsPjKDupR1KRM"
+
+    const supabaseClient = supabase.createClient(
+      supabaseUrl,
+      supabaseKey
+    );
+
+    const msg = document.getElementById("msg");
+
+    document.getElementById("loginBtn").addEventListener("click", async () => {
+      msg.style.color = "#43d68c";
+      msg.innerText = "Entrando...";
+
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      const { error } = await supabaseClient.auth.signInWithPassword({
+        email,
+        password
+      });
+
+      if (error) {
+        msg.style.color = "#de3d28";
+        msg.innerText = error.message;
+      } else {
+        msg.style.color = "#43d68c";
+        msg.innerText = "Login realizado com sucesso!";
+        //window.location.href = "importar.html";
+
+        const { data: { user }, error: userError } = await supabaseClient.auth.getUser();
+
+  if (userError || !user) {
+    console.error("Erro ao obter usuário:", userError);
+    return;
+  }
+
+  const { data: registros, error: consultaError } = await supabaseClient
+    .from("dados_arquivo")
+    .select("*")
+    .eq("id_usuario", user.id) // ✅ AQUI É user.id
+    .limit(1);
+
+  if (consultaError) {
+    console.error("Erro ao consultar registros:", consultaError);
+    return;
+  }
+
+  if (!registros || registros.length === 0) {
+    window.location.href = "importar.html";
+  } else {
+    window.location.href = "dashboard.html";
+  }
+
+      }
+    });
+
+    // 👁 Mostrar / ocultar senha
+    const togglePassword = document.getElementById("togglePassword");
+    const passwordInput = document.getElementById("password");
+
+    togglePassword.addEventListener("click", () => {
+      const isPassword = passwordInput.type === "password";
+      passwordInput.type = isPassword ? "text" : "password";
+      togglePassword.textContent = isPassword ? "🙈" : "👁";
+    });
+  </script>
+
+</body>
+</html>
