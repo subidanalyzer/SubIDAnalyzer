@@ -596,6 +596,18 @@ const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS
 
 const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
+async function checkAuth() {
+  const { data } = await supabaseClient.auth.getSession();
+  if (!data.session) {
+    window.location.href = "index.html";
+    return;
+  }
+  currentUser = data.session.user;
+  loading.style.display = "none";
+  app.style.display = "block";
+}
+checkAuth();  
+
 // ===============================
 // ELEMENTOS DO DOM
 // ===============================
@@ -911,3 +923,4 @@ inicializarDatas();
 
 </body>
 </html>
+
