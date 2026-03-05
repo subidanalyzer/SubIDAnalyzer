@@ -519,10 +519,6 @@ td:last-child {
         <div class="card-value" id="totalComissao">--</div>
       </div>
 
-      <div class="card">
-        <div class="card-title">Ticket Médio</div>
-        <div class="card-value" id="ticketMedio">--</div>
-      </div>
     </div>
 
 
@@ -603,7 +599,7 @@ async function checkAuth() {
     return;
   }
   currentUser = data.session.user;
-  loading.style.display = "none";
+  //loading.style.display = "none";
   app.style.display = "block";
 }
 checkAuth();  
@@ -615,7 +611,7 @@ const totalPedidosCard = document.getElementById("totalPedidos");
 const totalItensCard = document.getElementById("itensVendidos");
 const totalVendasCard = document.getElementById("totalVendas");
 const totalComissaoCard = document.getElementById("totalComissao");
-const ticketMedioCard = document.getElementById("ticketMedio");
+//const ticketMedioCard = document.getElementById("ticketMedio");
 
 const dataInicialInput = document.getElementById("dataInicial");
 const dataFinalInput = document.getElementById("dataFinal");
@@ -651,7 +647,7 @@ async function carregarDashboard(dataInicial, dataFinal) {
     totalItensCard.innerText = 0;
     totalVendasCard.innerText = "R$ 0,00";
     totalComissaoCard.innerText = "R$ 0,00";
-    ticketMedioCard.innerText = "R$ 0,00";
+    //ticketMedioCard.innerText = "R$ 0,00";
     return;
   }
 
@@ -668,9 +664,9 @@ async function carregarDashboard(dataInicial, dataFinal) {
     (resumo.total_comissao || 0)
       .toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 
-  ticketMedioCard.innerText =
-    (resumo.ticket_medio || 0)
-      .toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+  //ticketMedioCard.innerText =
+  //  (resumo.ticket_medio || 0)
+  //    .toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 
   
 
@@ -923,4 +919,3 @@ inicializarDatas();
 
 </body>
 </html>
-
