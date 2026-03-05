@@ -1,7 +1,8 @@
 {
   "name": "subid-analyzer",
   "version": "1.0.0",
-  "dependencies": {
+  "dependencies": { 
     "@supabase/supabase-js": "^2.39.0"
   }
+
 }
