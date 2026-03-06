@@ -13,7 +13,11 @@ export default async function handler(req, res) {
 
   try {
 
-    const { email } = req.body
+    const { email, token } = req.body;
+
+    if (token !== process.env.ADMIN_TOKEN) {
+        return res.status(401).json({ error: "Não autorizado" });
+    }
 
     if (!email) {
       return res.status(400).json({ error: "Email obrigatório" })
