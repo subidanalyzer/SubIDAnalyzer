@@ -12,7 +12,7 @@ export default async function handler(req, res) {
   const { data, error } = await supabase
     .from("usuario")
     .select("*")
-    .eq("nm_usuario", usuario);
+    .ilike("nm_usuario", usuario)
 
   return res.json({
     usuario,
