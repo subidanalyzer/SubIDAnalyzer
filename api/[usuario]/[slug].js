@@ -7,16 +7,12 @@ const supabase = createClient(
 
 export default async function handler(req, res) {
 
-  const { usuario } = req.query;
-
   const { data, error } = await supabase
     .from("usuario")
-    .select("*")
-    .ilike("nm_usuario", usuario)
+    .select("*");
 
   return res.json({
-    usuario,
-    resultado: data,
+    dados_encontrados: data,
     erro: error
   });
 
