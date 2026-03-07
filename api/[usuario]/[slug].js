@@ -9,10 +9,10 @@ export default async function handler(req, res) {
 
   const { usuario, slug } = req.query;
 
-  // procurar usuário
-  const { data: user } = await supabase
+  // buscar usuário pelo nome público
+  const { data: user, error: userError } = await supabase
     .from("usuario")
-    .select("nr_sequencia")
+    .select("id_auth")
     .eq("nm_usuario", usuario)
     .single();
 
@@ -20,11 +20,11 @@ export default async function handler(req, res) {
     return res.status(404).send("Usuário não encontrado");
   }
 
-  // procurar link
-  const { data: link } = await supabase
+  // buscar link pelo UUID do usuário
+  const { data: link, error: linkError } = await supabase
     .from("links")
     .select("ds_link_original")
-    .eq("id_usuario", user.nr_sequencia)
+    .eq("id_usuario", user.id_auth)
     .eq("ds_slug", slug)
     .single();
 
@@ -34,7 +34,7 @@ export default async function handler(req, res) {
 
   // redirecionar
   res.writeHead(302, {
-    Location: link.ds_link_origin
+    Location: link.ds_link_original
   });
 
   res.end();
