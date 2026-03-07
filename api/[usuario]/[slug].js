@@ -7,13 +7,35 @@ const supabase = createClient(
 
 export default async function handler(req, res) {
 
-  const { data, error } = await supabase
-    .from("usuario")
-    .select("*");
+  const { usuario, slug } = req.query;
 
-  return res.json({
-    dados_encontrados: data,
-    erro: error
+  // buscar usuário
+  const { data: user } = await supabase
+    .from("usuario")
+    .select("id_auth")
+    .eq("nm_usuario", usuario)
+    .single();
+
+  if (!user) {
+    return res.status(404).send("Usuário não encontrado");
+  }
+
+  // buscar link
+  const { data: link } = await supabase
+    .from("links")
+    .select("ds_link_original")
+    .eq("id_usuario", user.id_auth)
+    .eq("ds_slug", slug)
+    .single();
+
+  if (!link) {
+    return res.status(404).send("Link não encontrado");
+  }
+
+  // redirect
+  res.writeHead(302, {
+    Location: link.ds_link_original
   });
 
+  res.end();
 }
