@@ -9,25 +9,33 @@ export default async function handler(req, res) {
 
   const { usuario, slug } = req.query;
 
+  const { data: link } = await supabase
+  .from("links")
+  .select("id, ds_link_original, usuario!inner(id_auth)")
+  .eq("ds_slug", slug)
+  .eq("usuario.nm_usuario", usuario)
+  .single();
+
+
   // buscar usuário
-  const { data: user } = await supabase
+  /* const { data: user } = await supabase
     .from("usuario")
     .select("id_auth")
     .eq("nm_usuario", usuario)
     .single();
-
+  
   if (!user) {
     return res.status(404).send("Usuário não encontrado");
   }
 
   // buscar link
-  const { data: link } = await supabase
+ /* const { data: link } = await supabase
     .from("links")
     .select("id, ds_link_original")
     .eq("id_usuario", user.id_auth)
     .eq("ds_slug", slug)
     .single();
-
+  */
   if (!link) {
     return res.status(404).send("Link não encontrado");
   }
