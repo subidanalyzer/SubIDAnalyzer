@@ -60,7 +60,8 @@ const { data: link, error } = await supabase
  
     // salvar clique (não bloqueia redirect)
     await supabase.from("cliques").insert({
-      id_usuario: user.id_auth,
+     // id_usuario: user.id_auth,
+      id_usuario: link.usuario.id_auth,
       slug: slug,
       nr_seq_link: link.id,
       referer: referer,
