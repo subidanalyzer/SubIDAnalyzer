@@ -18,7 +18,7 @@ const { data: link, error } = await supabase
   `)
   .eq("ds_slug", slug)
   .eq("usuario.nm_usuario", usuario)
-  .maybeSingle();
+  .single();
 
 
 
