@@ -47,7 +47,7 @@ export default async function handler(req, res) {
   await supabase.from("cliques").insert({
   id_usuario: user.id_auth,
   slug: slug,
-  nr_seq_link: link.nr_sequencia,
+  nr_seq_link: link.id,
   referer: referer,
   device: device,
   user_agent: userAgent,
