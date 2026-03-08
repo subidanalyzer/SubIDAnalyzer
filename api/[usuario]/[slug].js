@@ -23,7 +23,7 @@ export default async function handler(req, res) {
   // buscar link
   const { data: link } = await supabase
     .from("links")
-    .select("ds_link_original")
+    .select("nr_sequencia, ds_link_original")
     .eq("id_usuario", user.id_auth)
     .eq("ds_slug", slug)
     .single();
@@ -47,6 +47,7 @@ export default async function handler(req, res) {
   await supabase.from("cliques").insert({
   id_usuario: user.id_auth,
   slug: slug,
+  nr_seq_link: link.nr_sequencia,
   referer: referer,
   device: device,
   user_agent: userAgent,
