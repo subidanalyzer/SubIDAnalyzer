@@ -9,12 +9,16 @@ export default async function handler(req, res) {
 
   const { usuario, slug } = req.query;
 
-  const { data: link } = await supabase
-  .from("links")
-  .select("id, ds_link_original, usuario!inner(id_auth)")
-  .eq("ds_slug", slug)
-  .eq("usuario.nm_usuario", usuario)
-  .single();
+  const { data: link, error } = await supabase
+    .from("links")
+    .select(`
+      id,
+      ds_link_original,
+      usuario:usuario!inner(id_auth, nm_usuario)
+    `)
+    .eq("ds_slug", slug)
+    .eq("usuario.nm_usuario", usuario)
+    .single();
 
 
   // buscar usuário
