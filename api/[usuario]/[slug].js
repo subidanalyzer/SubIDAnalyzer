@@ -32,6 +32,27 @@ export default async function handler(req, res) {
     return res.status(404).send("Link não encontrado");
   }
 
+    // capturar dados do clique
+  const referer = req.headers.referer || null;
+  const userAgent = req.headers["user-agent"] || null;
+  const ip =
+    req.headers["x-forwarded-for"]?.split(",")[0] ||
+    req.socket?.remoteAddress ||
+    null;
+
+  // detectar dispositivo simples
+  const device = /mobile/i.test(userAgent) ? "mobile" : "desktop";
+
+  // salvar clique (não bloqueia redirect)
+  supabase.from("cliques").insert({
+    id_usuario: user.id_auth,
+    slug: slug,
+    referer: referer,
+    device: device,
+    user_agent: userAgent,
+    ip: ip
+  });
+
   // redirect
   res.writeHead(302, {
     Location: link.ds_link_original
