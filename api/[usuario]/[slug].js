@@ -44,18 +44,19 @@ export default async function handler(req, res) {
   const device = /mobile/i.test(userAgent) ? "mobile" : "desktop";
 
   const isBot = /bot|crawler|spider|facebookexternalhit|WhatsApp|TelegramBot/i.test(userAgent);
-  if (!isBot) {
-      // salvar clique (não bloqueia redirect)
-      await supabase.from("cliques").insert({
+ 
+    // salvar clique (não bloqueia redirect)
+    await supabase.from("cliques").insert({
       id_usuario: user.id_auth,
       slug: slug,
       nr_seq_link: link.id,
       referer: referer,
       device: device,
       user_agent: userAgent,
-      ip: ip
+      ip: ip,
+      ie_bot: isBot
     });
-  }
+ 
 
   // redirect
   res.writeHead(302, {
