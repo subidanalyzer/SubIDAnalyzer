@@ -44,7 +44,9 @@ export default async function handler(req, res) {
   const device = /mobile/i.test(userAgent) ? "mobile" : "desktop";
 
   // salvar clique (não bloqueia redirect)
-  supabase.from("cliques").insert({
+const { error } = await supabase
+  .from("cliques")
+  .insert({
     id_usuario: user.id_auth,
     slug: slug,
     referer: referer,
@@ -52,6 +54,10 @@ export default async function handler(req, res) {
     user_agent: userAgent,
     ip: ip
   });
+
+if (error) {
+  console.log("Erro ao salvar clique:", error);
+}
 
   // redirect
   res.writeHead(302, {
