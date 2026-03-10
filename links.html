@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<title>Shopee Commissions Analyzer • Links</title>
+<link rel="icon" href="favicon.ico">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+
+<style>
+
+*{box-sizing:border-box}
+
+body{
+margin:0;
+font-family:'Inter',sans-serif;
+background:#0e1b1f;
+color:#fff;
+}
+
+header{
+height:64px;
+background:#0f0f0f;
+display:flex;
+align-items:center;
+justify-content:space-between;
+padding:0 28px;
+box-shadow:0 2px 12px rgba(0,0,0,0.45);
+}
+
+header img{height:34px}
+
+header button{
+background:none;
+border:1px solid #43d68c;
+color:#43d68c;
+padding:8px 16px;
+border-radius:8px;
+cursor:pointer;
+}
+
+.layout{
+display:flex;
+height:calc(100vh - 64px);
+}
+
+.sidebar{
+width:220px;
+background:#0f0f0f;
+padding:24px 18px;
+border-right:1px solid rgba(255,255,255,0.06);
+}
+
+.sidebar h3{
+font-size:12px;
+text-transform:uppercase;
+letter-spacing:1px;
+color:#9e9e9e;
+margin-bottom:14px;
+}
+
+.sidebar a{
+display:block;
+padding:10px 12px;
+border-radius:8px;
+color:#dcdcdc;
+text-decoration:none;
+margin-bottom:6px;
+font-size:14px;
+}
+
+.sidebar a.active,
+.sidebar a:hover{
+background:rgba(67,214,140,0.15);
+color:#43d68c;
+}
+
+main{
+flex:1;
+padding:36px;
+overflow-y:auto;
+}
+
+.page-title{
+font-family:'Poppins',sans-serif;
+font-size:40px;
+}
+
+.page-subtitle{
+font-family:'Poppins',sans-serif;
+font-size:20px;
+color:#bdbdbd;
+margin-bottom:30px;
+}
+
+.card{
+background:#0f0f0f;
+padding:24px;
+border-radius:16px;
+max-width:520px;
+}
+
+input{
+width:100%;
+margin-top:6px;
+margin-bottom:14px;
+background:#0f0f0f;
+border:1px solid rgba(255,255,255,0.1);
+color:#fff;
+padding:10px;
+border-radius:8px;
+}
+
+button.create{
+background:#43d68c;
+border:none;
+color:#0f0f0f;
+padding:10px 16px;
+border-radius:8px;
+cursor:pointer;
+font-weight:600;
+}
+
+.result{
+margin-top:16px;
+font-size:14px;
+color:#43d68c;
+word-break:break-all;
+}
+
+.table{
+margin-top:40px;
+background:#0f0f0f;
+border-radius:16px;
+overflow:hidden;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+font-size:14px;
+}
+
+th,td{
+padding:12px 16px;
+text-align:left;
+}
+
+th{
+font-size:12px;
+text-transform:uppercase;
+color:#9e9e9e;
+}
+
+tbody tr{
+border-top:1px solid rgba(255,255,255,0.05);
+}
+
+tbody tr:hover{
+background:rgba(67,214,140,0.05);
+}
+
+.actions{
+display:flex;
+gap:8px;
+}
+
+.btn-link{
+background:#1a1a1a;
+border:1px solid rgba(255,255,255,0.1);
+color:#fff;
+padding:6px 10px;
+border-radius:6px;
+cursor:pointer;
+font-size:12px;
+}
+
+.btn-link:hover{
+background:#43d68c;
+color:#0f0f0f;
+border-color:#43d68c;
+}
+.modal{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.65);
+display:none;
+align-items:center;
+justify-content:center;
+z-index:999;
+
+opacity:0;
+transition:opacity .25s ease;
+}
+
+.modal.show{
+display:flex;
+opacity:1;
+}
+
+.modal-box{
+background:#0f0f0f;
+padding:28px;
+border-radius:14px;
+width:420px;
+box-shadow:0 20px 60px rgba(0,0,0,0.7);
+
+transform:translateY(20px);
+transition:transform .25s ease;
+}
+
+.modal.show .modal-box{
+transform:translateY(0);
+}
+
+.modal-box input{
+margin-top:10px;
+}
+
+
+
+#toast{
+position:fixed;
+top:20px;
+right:20px;
+display:flex;
+flex-direction:column;
+gap:10px;
+z-index:2000;
+}
+
+.toast{
+background:#111;
+color:#fff;
+padding:12px 16px;
+border-radius:8px;
+box-shadow:0 10px 30px rgba(0,0,0,0.4);
+font-size:14px;
+display:flex;
+align-items:center;
+gap:10px;
+
+opacity:0;
+transform:translateY(-10px);
+animation:toastIn .25s forwards;
+}
+
+.toast.success{
+border-left:4px solid #43d68c;
+}
+
+.toast.error{
+border-left:4px solid #ff5c5c;
+}
+
+@keyframes toastIn{
+to{
+opacity:1;
+transform:translateY(0);
+}
+}
+
+
+
+.delete-btn{
+background:#ff4d4f;
+border:none;
+color:#fff;
+padding:10px 16px;
+border-radius:8px;
+cursor:pointer;
+font-weight:600;
+}
+
+.delete-btn:hover{
+background:#e63c3e;
+}
+
+
+.pagination{
+margin-top:20px;
+display:flex;
+align-items:center;
+gap:16px;
+}
+
+
+
+
+</style>
+</head>
+
+<body>
+
+<header>
+<img src="logo.png">
+<button id="logoutBtn">Sair</button>
+</header>
+
+<div class="layout">
+
+<aside class="sidebar">
+<h3>Painel</h3>
+<a href="importar.html">Importar</a>
+<a href="dashboard.html">Dashboard</a>
+<a class="active">Links</a>
+</aside>
+
+
+
+<main>
+
+<div class="page-title">Links</div>
+<div class="page-subtitle">Gerador de links rastreáveis</div>
+
+<div class="card">
+
+<label>Slug</label>
+<input id="slug">
+
+<label>Link original</label>
+<input id="url">
+
+<button class="create" id="createBtn">Criar link</button>
+
+<div class="result" id="result"></div>
+
+</div>
+
+<div class="table">
+
+<table>
+
+<thead>
+<tr>
+<th>Slug</th>
+<th>Destino</th>
+<th>Link gerado</th>
+<th>Cliques</th>
+<th>Ações</th>
+</tr>
+</thead>
+
+<tbody id="linksTable"></tbody>
+
+</table>
+
+</div>
+
+<div class="pagination">
+
+<button id="prevPage" class="btn-link">⬅ Anterior</button>
+
+<span id="pageInfo"></span>
+
+<button id="nextPage" class="btn-link">Próximo ➡</button>
+
+</div>
+
+</main>
+
+</div>
+
+<div id="editModal" class="modal">
+
+<div class="modal-box">
+
+<h2>Editar link destino</h2>
+
+<input id="editInput">
+
+<div class="modal-actions">
+<button id="cancelEdit" class="btn-link">Cancelar</button>
+<button id="saveEdit" class="create">Salvar</button>
+</div>
+
+</div>
+
+</div>
+
+<div id="toast"></div>
+
+
+
+
+<div id="deleteModal" class="modal">
+
+<div class="modal-box">
+
+<h2>Excluir link</h2>
+
+<p style="color:#bdbdbd;font-size:14px;margin-top:10px">
+Você perderá <b>todos os dados de cliques</b> deste link.<br>
+Esta ação é <b>irreversível</b>.
+</p>
+
+<div class="modal-actions">
+
+<button id="cancelDelete" class="btn-link">
+Cancelar
+</button>
+
+<button id="confirmDelete" class="delete-btn">
+Excluir
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+
+const SUPABASE_URL="https://miudgbuwxwvszdunlifw.supabase.co"
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1pdWRnYnV3eHd2c3pkdW5saWZ3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk1NTMxODUsImV4cCI6MjA4NTEyOTE4NX0.WtelQveBTVlhR0BLb6ke9xb2i0a3ocfsPjKDupR1KRM"
+
+const slugInput = document.getElementById("slug")
+const urlInput = document.getElementById("url")
+const createBtn = document.getElementById("createBtn")
+const result = document.getElementById("result")
+const linksTable = document.getElementById("linksTable")
+const logoutBtn = document.getElementById("logoutBtn")
+
+const supabaseClient=supabase.createClient(SUPABASE_URL,SUPABASE_KEY)
+
+let currentUser=null
+
+async function checkAuth(){
+
+const {data}=await supabaseClient.auth.getSession()
+
+if(!data.session){
+window.location.href="index.html"
+return
+}
+
+currentUser=data.session.user
+
+carregarLinks()
+
+}
+
+checkAuth()
+
+logoutBtn.onclick=async()=>{
+await supabaseClient.auth.signOut()
+window.location.href="index.html"
+}
+
+createBtn.onclick=async()=>{
+
+let slug = slugInput.value.trim().toLowerCase()
+let url = urlInput.value.trim()   
+
+if(!slug||!url){
+alert("Preencha os campos")
+return
+}
+
+const slugValido = /^[a-z0-9_-]+$/
+
+if(!slugValido.test(slug)){
+alert("Slug inválido. Use apenas letras, números, - ou _")
+return
+}
+
+url = url.replace(/\s/g,"")
+
+if(!/^https?:\/\//i.test(url)){
+  url = "https://" + url
+}
+
+const usuario = currentUser.id
+
+// 🔎 Verificar se slug já existe
+const { data:slugExistente, error:erroBusca } = await supabaseClient
+.from("links")
+.select("id")
+.eq("id_usuario", usuario)
+.eq("ds_slug", slug)
+.limit(1)
+
+if(erroBusca){
+console.error(erroBusca)
+alert("Erro ao verificar slug")
+return
+}
+
+if(slugExistente.length > 0){
+showToast("Slug já existe","error")
+
+return
+}
+
+const {error}=await supabaseClient
+.from("links")
+.insert({
+ds_slug:slug,
+ds_link_original:url,
+id_usuario:currentUser.id
+})
+
+if(error){
+showToast("Erro ao criar link","error")
+return
+}
+
+showToast("Link criado com sucesso!")
+
+//const usuario=await getUsuario()
+const nmUsuario = await getUsuario()
+const final=`https://subidanalyzer.vercel.app/api/${nmUsuario}/${slug}`
+
+result.innerText=final
+
+slugInput.value=""
+urlInput.value=""
+
+carregarLinks()
+
+}
+
+async function getUsuario(){
+
+const {data}=await supabaseClient
+.from("usuario")
+.select("nm_usuario")
+.eq("id_auth",currentUser.id)
+.single()
+
+return data.nm_usuario
+
+}
+
+async function carregarLinks(){
+
+const inicio = (paginaAtual - 1) * itensPorPagina
+const fim = inicio + itensPorPagina - 1
+
+const {data:links,error,count} = await supabaseClient
+.from("links")
+.select("*", { count: "exact" })
+.eq("id_usuario",currentUser.id)
+.order("id", { ascending: true })
+.range(inicio, fim)
+
+const totalPaginas = Math.ceil(count / itensPorPagina)
+
+if(error){
+console.error(error)
+return
+}
+
+const {data:cliques}=await supabaseClient
+.from("cliques")
+.select("nr_seq_link")
+
+const usuario=await getUsuario()
+
+linksTable.innerHTML=""
+
+links.forEach(link=>{
+
+const totalCliques = cliques.filter(c => c.nr_seq_link === link.id).length
+
+const final=`https://subidanalyzer.vercel.app/api/${usuario}/${link.ds_slug}`
+
+linksTable.innerHTML+=`
+
+<tr>
+<td>${link.ds_slug}</td>
+<td>${link.ds_link_original}</td>
+<td>${final}</td>
+<td>${totalCliques}</td>
+
+<td>
+<div class="actions">
+
+<button class="btn-link"
+onclick="window.open('${final}','_blank')">
+🔗 Abrir
+</button>
+
+<button class="btn-link"
+onclick="copiarLink('${final}')">
+📋 Copiar
+</button>
+
+<button class="btn-link"
+onclick="editarLink(${link.id}, '${link.ds_link_original}')">
+✏️ Editar
+</button>
+
+<button class="btn-link"
+onclick="excluirLink(${link.id})">
+🗑 Excluir
+</button>
+
+</div>
+</td>
+
+</tr>
+
+`
+
+})
+
+
+document.getElementById("pageInfo").innerText =
+`Página ${paginaAtual} de ${totalPaginas}`
+
+document.getElementById("prevPage").disabled = paginaAtual === 1
+document.getElementById("nextPage").disabled = paginaAtual === totalPaginas
+
+
+
+}
+
+function copiarLink(link){
+
+navigator.clipboard.writeText(link)
+
+showToast("Link copiado")
+
+}
+
+const editModal = document.getElementById("editModal")
+const editInput = document.getElementById("editInput")
+const cancelEdit = document.getElementById("cancelEdit")
+const saveEdit = document.getElementById("saveEdit")
+
+let editId = null
+
+cancelEdit.onclick = fecharModal
+
+editModal.onclick = (e)=>{
+
+if(e.target === editModal){
+fecharModal()
+}
+
+}
+
+
+document.addEventListener("keydown",(e)=>{
+
+if(e.key === "Escape"){
+fecharModal()
+}
+
+
+})
+
+function fecharModal(){
+editModal.classList.remove("show")
+editId = null
+}
+
+
+
+function editarLink(id, linkAtual){
+
+editId = id
+
+editInput.value = linkAtual
+
+editModal.classList.add("show")
+
+setTimeout(()=>{
+editInput.focus()
+editInput.select()
+},50)
+
+}
+
+
+
+
+saveEdit.onclick = async () => {
+
+let novoLink = editInput.value.trim()
+
+if(!novoLink){
+alert("Informe um link válido")
+return
+}
+
+if(!/^https?:\/\//i.test(novoLink)){
+novoLink = "https://" + novoLink
+}
+
+const {error} = await supabaseClient
+.from("links")
+.update({
+ds_link_original: novoLink
+})
+.eq("id", editId)
+
+if(error){
+console.error(error)
+alert("Erro ao atualizar link")
+return
+}
+
+fecharModal()
+
+showToast("Link atualizado com sucesso")
+carregarLinks()
+
+}
+
+
+
+
+const toastContainer = document.getElementById("toast")
+
+function showToast(message,type="success"){
+
+const toast=document.createElement("div")
+
+toast.className=`toast ${type}`
+
+toast.innerText=message
+
+toastContainer.appendChild(toast)
+
+setTimeout(()=>{
+toast.remove()
+},3000)
+
+}
+
+
+const deleteModal = document.getElementById("deleteModal")
+const cancelDelete = document.getElementById("cancelDelete")
+const confirmDelete = document.getElementById("confirmDelete")
+
+let deleteId = null
+
+
+function excluirLink(id){
+
+deleteId = id
+
+deleteModal.classList.add("show")
+
+}
+
+
+cancelDelete.onclick = () => {
+deleteModal.classList.remove("show")
+}
+
+
+
+
+confirmDelete.onclick = async () => {
+
+if(!deleteId) return
+
+
+// apagar cliques
+//const {error:errorCliques} = await supabaseClient
+//.from("cliques")
+//.delete()
+//.eq("nr_seq_link", deleteId)
+
+//if(errorCliques){
+//console.error(errorCliques)
+//showToast("Erro ao excluir cliques","error")
+//return
+//}
+
+
+
+// apagar link
+const {error:errorLink} = await supabaseClient
+.from("links")
+.delete()
+.eq("id", deleteId)
+
+if(errorLink){
+console.error(errorLink)
+showToast("Erro ao excluir link","error")
+return
+}
+
+deleteModal.classList.remove("show")
+
+showToast("Link excluído com sucesso")
+
+carregarLinks()
+
+}
+
+
+
+
+deleteModal.onclick = (e)=>{
+
+if(e.target === deleteModal){
+deleteModal.classList.remove("show")
+}
+
+}
+
+
+let paginaAtual = 1
+const itensPorPagina = 5
+
+
+document.getElementById("prevPage").onclick = () => {
+
+if(paginaAtual > 1){
+paginaAtual--
+carregarLinks()
+}
+
+}
+
+document.getElementById("nextPage").onclick = () => {
+
+paginaAtual++
+carregarLinks()
+
+}
+
+
+
+
+
+
+
+
+</script>
+
+
+</body>
+</html>
