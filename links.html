@@ -463,6 +463,19 @@ window.location.href="index.html"
 
 createBtn.onclick=async()=>{
 
+ const username = await getUsername()
+
+ if(!username){
+
+   showToast("Defina seu username na página Minha Conta antes de criar links","error")
+
+   setTimeout(()=>{
+     window.location.href = "/minha-conta.html"
+   },2000)
+
+   return
+ }  
+
 let slug = slugInput.value.trim().toLowerCase()
 let url = urlInput.value.trim()   
 
@@ -839,6 +852,23 @@ carregarLinks()
 
 }
 
+async function getUsername() {
+
+ const { data, error } = await supabaseClient
+   .from("usuario")
+   .select("nm_usuario")
+   .eq("id_auth", currentUser.id)
+   .single()
+
+ if(error){
+   console.log(error)
+   return null
+ }
+
+ return data?.nm_usuario
+}
+  
+
 
 
 
@@ -851,4 +881,5 @@ carregarLinks()
 
 </body>
 </html>
+
 
