@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<title>Shopee Commissions Analyzer • Minha Conta</title>
+<link rel="icon" href="favicon.ico">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+
+<style>
+
+*{box-sizing:border-box}
+
+body{
+margin:0;
+font-family:'Inter',sans-serif;
+background:#0e1b1f;
+color:#fff;
+}
+
+header{
+height:64px;
+background:#0f0f0f;
+display:flex;
+align-items:center;
+justify-content:space-between;
+padding:0 28px;
+box-shadow:0 2px 12px rgba(0,0,0,0.45);
+}
+
+header img{height:34px}
+
+header button{
+background:none;
+border:1px solid #43d68c;
+color:#43d68c;
+padding:8px 16px;
+border-radius:8px;
+cursor:pointer;
+}
+
+.layout{
+display:flex;
+height:calc(100vh - 64px);
+}
+
+.sidebar{
+width:220px;
+background:#0f0f0f;
+padding:24px 18px;
+border-right:1px solid rgba(255,255,255,0.06);
+}
+
+.sidebar h3{
+font-size:12px;
+text-transform:uppercase;
+letter-spacing:1px;
+color:#9e9e9e;
+margin-bottom:14px;
+}
+
+.sidebar a{
+display:block;
+padding:10px 12px;
+border-radius:8px;
+color:#dcdcdc;
+text-decoration:none;
+margin-bottom:6px;
+font-size:14px;
+}
+
+.sidebar a.active,
+.sidebar a:hover{
+background:rgba(67,214,140,0.15);
+color:#43d68c;
+}
+
+main{
+flex:1;
+padding:36px;
+overflow-y:auto;
+}
+
+.page-title{
+font-family:'Poppins',sans-serif;
+font-size:40px;
+}
+
+.page-subtitle{
+font-family:'Poppins',sans-serif;
+font-size:20px;
+color:#bdbdbd;
+margin-bottom:30px;
+}
+
+.card{
+background:#0f0f0f;
+padding:24px;
+border-radius:16px;
+max-width:520px;
+}
+
+label{
+font-size:13px;
+color:#bdbdbd;
+}
+
+.info{
+margin-bottom:16px;
+font-size:14px;
+}
+
+input{
+width:100%;
+margin-top:6px;
+margin-bottom:14px;
+background:#0f0f0f;
+border:1px solid rgba(255,255,255,0.1);
+color:#fff;
+padding:10px;
+border-radius:8px;
+}
+
+button.save{
+background:#43d68c;
+border:none;
+color:#0f0f0f;
+padding:10px 16px;
+border-radius:8px;
+cursor:pointer;
+font-weight:600;
+}
+
+.preview{
+margin-top:10px;
+font-size:13px;
+color:#9e9e9e;
+}
+
+.preview span{
+color:#43d68c;
+}
+
+/* toast */
+
+#toast{
+position:fixed;
+top:20px;
+right:20px;
+display:flex;
+flex-direction:column;
+gap:10px;
+z-index:2000;
+}
+
+.toast{
+background:#111;
+padding:12px 16px;
+border-radius:8px;
+box-shadow:0 10px 30px rgba(0,0,0,0.4);
+font-size:14px;
+}
+
+.toast.success{border-left:4px solid #43d68c}
+.toast.error{border-left:4px solid #ff4d4f}
+
+</style>
+</head>
+
+<body>
+
+<header>
+<img src="logo.png">
+<button id="logoutBtn">Sair</button>
+</header>
+
+<div class="layout">
+
+<aside class="sidebar">
+<h3>Painel</h3>
+<a href="importar.html">Importar</a>
+<a href="dashboard.html">Dashboard</a>
+<a href="links.html">Links</a>
+<a class="active">Minha Conta</a>
+</aside>
+
+<main>
+
+<div class="page-title">Minha Conta</div>
+<div class="page-subtitle">Gerencie suas informações</div>
+
+<div class="card">
+
+<div class="info">
+<b>Email</b><br>
+<span id="email"></span>
+</div>
+
+<div class="info">
+<b>Membro desde</b><br>
+<span id="created"></span>
+</div>
+
+<label>Username público</label>
+<input id="username">
+
+<div class="preview">
+Seu link ficará:<br>
+<span id="previewLink">subidanalyzer.vercel.app/api/username/slug</span>
+</div>
+
+<br>
+
+<button class="save" id="saveBtn">
+Salvar
+</button>
+
+</div>
+
+</main>
+
+</div>
+
+<div id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+
+const SUPABASE_URL="https://miudgbuwxwvszdunlifw.supabase.co"
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1pdWRnYnV3eHd2c3pkdW5saWZ3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk1NTMxODUsImV4cCI6MjA4NTEyOTE4NX0.WtelQveBTVlhR0BLb6ke9xb2i0a3ocfsPjKDupR1KRM"
+
+const supabaseClient=supabase.createClient(SUPABASE_URL,SUPABASE_KEY)
+
+const emailEl=document.getElementById("email")
+const createdEl=document.getElementById("created")
+const usernameInput=document.getElementById("username")
+const preview=document.getElementById("previewLink")
+const saveBtn=document.getElementById("saveBtn")
+const logoutBtn=document.getElementById("logoutBtn")
+
+const toastContainer=document.getElementById("toast")
+
+let currentUser=null
+
+function showToast(msg,type="success"){
+
+const t=document.createElement("div")
+t.className=`toast ${type}`
+t.innerText=msg
+
+toastContainer.appendChild(t)
+
+setTimeout(()=>t.remove(),3000)
+
+}
+
+async function checkAuth(){
+
+const {data}=await supabaseClient.auth.getSession()
+
+if(!data.session){
+window.location.href="index.html"
+return
+}
+
+currentUser=data.session.user
+
+emailEl.innerText=currentUser.email
+
+createdEl.innerText=new Date(currentUser.created_at).toLocaleDateString()
+
+carregarUsuario()
+
+}
+
+checkAuth()
+
+logoutBtn.onclick=async()=>{
+
+await supabaseClient.auth.signOut()
+
+window.location.href="index.html"
+
+}
+
+async function carregarUsuario(){
+
+const {data}=await supabaseClient
+.from("usuario")
+.select("nm_usuario")
+.eq("id_auth",currentUser.id)
+.single()
+
+if(data){
+
+usernameInput.value=data.nm_usuario
+atualizarPreview()
+
+}
+
+}
+
+usernameInput.addEventListener("input",atualizarPreview)
+
+function atualizarPreview(){
+
+const u=usernameInput.value.trim()
+
+if(!u){
+
+preview.innerText="subidanalyzer.vercel.app/api/username/slug"
+
+return
+
+}
+
+preview.innerText=`subidanalyzer.vercel.app/api/${u}/slug`
+
+}
+
+saveBtn.onclick = async () => {
+
+ const username = usernameInput.value.trim()
+
+ if(!username){
+   showToast("Digite um username","error")
+   return
+ }
+
+ if(username.includes(" ")){
+ showToast("Username não pode ter espaços","error")
+ return
+}
+
+if(username.length < 3){
+ showToast("Username precisa ter pelo menos 3 caracteres","error")
+ return
+}
+
+if(!/^[a-z0-9]+$/.test(username)){
+ showToast("Use apenas letras e números","error")
+ return
+}
+
+ const { error } = await supabaseClient
+   .from("usuario")
+   .upsert({
+      id_auth: currentUser.id,
+      nm_usuario: username
+   }, { onConflict: "id_auth" })
+
+ if(error){
+    if(error.code === "23505"){
+     showToast("Esse username já está em uso. Escolha outro.","error")
+     return
+    }
+   showToast("Erro ao salvar username","error")
+   return
+ }
+
+ showToast("Username salvo com sucesso","success")
+}
+
+
+</script>
+
+</body>
+</html>
