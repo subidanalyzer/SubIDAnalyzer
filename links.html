@@ -208,12 +208,16 @@ opacity:1;
 background:#0f0f0f;
 padding:28px;
 border-radius:14px;
-width:420px;
+width:720px;
 box-shadow:0 20px 60px rgba(0,0,0,0.7);
+
+max-height:85vh;
+overflow:auto;
 
 transform:translateY(20px);
 transition:transform .25s ease;
 }
+
 
 .modal.show .modal-box{
 transform:translateY(0);
@@ -288,6 +292,172 @@ margin-top:20px;
 display:flex;
 align-items:center;
 gap:16px;
+}
+
+
+.modal-content{
+background:#111;
+padding:24px;
+border-radius:12px;
+width:500px;
+color:white;
+max-height: 85vh;
+  overflow-y: auto;
+  padding-right: 8px;
+}
+
+
+.stats-grid{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:12px;
+}
+
+.stat-card{
+background:#1a1a1a;
+padding:10px 14px;
+border-radius:10px;
+border:1px solid rgba(255,255,255,0.05);
+display:flex;
+align-items:center;
+gap:10px;
+}
+
+
+.stat-icon{
+font-size:22px;
+width:36px;
+height:36px;
+display:flex;
+align-items:center;
+justify-content:center;
+background:rgba(67,214,140,0.15);
+border-radius:8px;
+}
+
+.stat-info{
+display:flex;
+flex-direction:column;
+}
+
+.stat-title{
+font-size:12px;
+color:#9e9e9e;
+}
+
+.stat-value{
+font-size:22px;
+font-weight:600;
+color:#43d68c;
+}
+
+.list-item{
+display:flex;
+justify-content:space-between;
+padding:8px 0;
+border-bottom:1px solid rgba(255,255,255,0.05);
+font-size:13px;
+color:#cfcfcf;
+}
+
+.mini-table{
+width:100%;
+border-collapse:collapse;
+margin-top:10px;
+font-size:13px;
+}
+
+.mini-table th{
+text-align:left;
+color:#9e9e9e;
+font-size:11px;
+text-transform:uppercase;
+padding:8px 6px;
+border-bottom:1px solid rgba(255,255,255,0.05);
+}
+
+.mini-table td{
+padding:8px 6px;
+border-bottom:1px solid rgba(255,255,255,0.05);
+color:#dcdcdc;
+}
+
+.mini-table tr:hover{
+background:rgba(67,214,140,0.05);
+}
+
+.mini-pagination{
+display:flex;
+align-items:center;
+justify-content:center;
+gap:12px;
+margin-top:10px;
+font-size:12px;
+color:#9e9e9e;
+}
+
+#clickChart{
+max-height:100px;
+}
+
+.modal-box::-webkit-scrollbar {
+  width: 6px;
+}
+
+.modal-box::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.modal-box::-webkit-scrollbar-thumb {
+  background: #22c55e;
+  border-radius: 10px;
+}
+
+.modal-box::-webkit-scrollbar-thumb:hover {
+  background: #16a34a;
+}
+
+
+.modal-analytics{
+width:900px;
+max-height:85vh;
+overflow-y:auto;
+}
+
+.modal-title{
+margin-bottom:20px;
+font-size:22px;
+}
+
+/* GRID gráfico + origem */
+
+.analytics-grid{
+display:grid;
+grid-template-columns: 2fr 1fr;
+gap:24px;
+margin-top:20px;
+}
+
+.chart-area{
+background:#111;
+padding:16px;
+border-radius:10px;
+border:1px solid rgba(255,255,255,0.05);
+}
+
+.referer-area{
+background:#111;
+padding:16px;
+border-radius:10px;
+border:1px solid rgba(255,255,255,0.05);
+max-height:240px;
+overflow-y:auto;
+}
+
+/* gráfico tamanho ideal */
+
+#clickChart{
+height:220px !important;
 }
 
 
@@ -412,16 +582,69 @@ Excluir
 </button>
 
 </div>
+</div>
+</div>
 
+
+<div id="modalInfo" class="modal">
+
+<div class="modal-box modal-analytics">
+
+<h2 class="modal-title">📊 Analytics do Link</h2>
+
+<div class="stats-grid" id="infoStats"></div>
+
+<div class="analytics-grid">
+
+<div class="chart-area">
+<h3>📈 Cliques por dia</h3>
+<canvas id="clickChart"></canvas>
+</div>
+
+<div class="referer-area">
+<h3>🔗 Origem dos cliques</h3>
+<div id="refererStats"></div>
 </div>
 
 </div>
+
+<h3 style="margin-top:24px">🕒 Últimos cliques</h3>
+
+
+<table class="mini-table">
+<thead>
+<tr>
+<th>Data</th>
+<th>Device</th>
+</tr>
+</thead>
+
+<tbody id="ultimosCliques"></tbody>
+</table>
+
+<div class="mini-pagination">
+<button id="prevClicks" class="btn-link">⬅</button>
+<span id="clickPageInfo"></span>
+<button id="nextClicks" class="btn-link">➡</button>
+</div>
+
+
+
+<div style="margin-top:24px;text-align:right">
+<button class="btn-link" onclick="fecharInfo()">Fechar</button>
+</div>
+
+</div>
+</div>
+
 
 
 
 
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 
 <script>
 
@@ -462,19 +685,6 @@ window.location.href="index.html"
 }
 
 createBtn.onclick=async()=>{
-
- const username = await getUsername()
-
- if(!username){
-
-   showToast("Defina seu username na página Minha Conta antes de criar links","error")
-
-   setTimeout(()=>{
-     window.location.href = "/minha-conta.html"
-   },2000)
-
-   return
- }  
 
 let slug = slugInput.value.trim().toLowerCase()
 let url = urlInput.value.trim()   
@@ -621,6 +831,11 @@ onclick="editarLink(${link.id}, '${link.ds_link_original}')">
 <button class="btn-link"
 onclick="excluirLink(${link.id})">
 🗑 Excluir
+</button>
+
+<button class="btn-link"
+onclick="infoCliques(${link.id})">
+📊 Info
 </button>
 
 </div>
@@ -784,22 +999,6 @@ deleteModal.classList.remove("show")
 confirmDelete.onclick = async () => {
 
 if(!deleteId) return
-
-
-// apagar cliques
-//const {error:errorCliques} = await supabaseClient
-//.from("cliques")
-//.delete()
-//.eq("nr_seq_link", deleteId)
-
-//if(errorCliques){
-//console.error(errorCliques)
-//showToast("Erro ao excluir cliques","error")
-//return
-//}
-
-
-
 // apagar link
 const {error:errorLink} = await supabaseClient
 .from("links")
@@ -834,6 +1033,7 @@ deleteModal.classList.remove("show")
 
 let paginaAtual = 1
 const itensPorPagina = 5
+let clickChart = null
 
 
 document.getElementById("prevPage").onclick = () => {
@@ -852,6 +1052,7 @@ carregarLinks()
 
 }
 
+
 async function getUsername() {
 
  const { data, error } = await supabaseClient
@@ -867,13 +1068,233 @@ async function getUsername() {
 
  return data?.nm_usuario
 }
-  
+
+
+async function infoCliques(linkId){
+
+const { data, error } = await supabaseClient
+.from("cliques")
+.select("*")
+.eq("nr_seq_link", linkId)
+.order("dt_criacao",{ascending:false})
+//.limit(50)
+
+if(error){
+console.log(error)
+return
+}
+
+allClicks = data || []
+clicksPage = 1
+renderClicks()
+
+let total = data.length
+
+let mobile = data.filter(c =>
+(c.device || "").toLowerCase().includes("mobile")
+).length
+
+let desktop = data.filter(c =>
+(c.device || "").toLowerCase().includes("desktop")
+).length
+
+let bots = data.filter(c => c.ie_bot === true).length
+
+// CARDS
+document.getElementById("infoStats").innerHTML = `
+
+<div class="stat-card">
+<div class="stat-icon">📊</div>
+<div class="stat-info">
+<div class="stat-title">Total de Cliques</div>
+<div class="stat-value">${total}</div>
+</div>
+</div>
+
+<div class="stat-card">
+<div class="stat-icon">📱</div>
+<div class="stat-info">
+<div class="stat-title">Mobile</div>
+<div class="stat-value">${mobile}</div>
+</div>
+</div>
+
+<div class="stat-card">
+<div class="stat-icon">💻</div>
+<div class="stat-info">
+<div class="stat-title">Desktop</div>
+<div class="stat-value">${desktop}</div>
+</div>
+</div>
+
+<div class="stat-card">
+<div class="stat-icon">🤖</div>
+<div class="stat-info">
+<div class="stat-title">Bots</div>
+<div class="stat-value">${bots}</div>
+</div>
+</div>
+`
+
+// ----------------
+// REFERER
+// ----------------
+
+let referers = {}
+console.log(data.map(c => c.referer))
+data.forEach(c => {
+
+  let ref = c.referer && c.referer.trim() !== "" 
+    ? c.referer 
+    : "Direct"
+
+  referers[ref] = (referers[ref] || 0) + 1
+
+})
+
+let htmlReferer = ""
+
+Object.entries(referers)
+.sort((a,b)=>b[1]-a[1])
+.slice(0,5)
+.forEach(([ref,total])=>{
+
+  htmlReferer += `
+  <div class="list-item">
+    <span>${ref}</span>
+    <span>${total}</span>
+  </div>
+  `
+
+})
+
+document.getElementById("refererStats").innerHTML = htmlReferer
+
+// ----------------
+// GRÁFICO
+// ----------------
+
+// ----------------
+// GRÁFICO
+// ----------------
+
+let cliquesPorDia = {}
+
+data.forEach(c=>{
+
+let dia = c.dt_criacao.split("T")[0]
+
+cliquesPorDia[dia] = (cliquesPorDia[dia] || 0) + 1
+
+})
+
+let labels = Object.keys(cliquesPorDia).map(data => {
+
+  const [ano,mes,dia] = data.split("-")
+  return `${dia}/${mes}`
+
+})
+
+let valores = Object.values(cliquesPorDia)
+
+
+const ctx = document.getElementById("clickChart").getContext("2d")
+
+if(clickChart){
+clickChart.destroy()
+}
+
+clickChart = new Chart(ctx,{
+type:"bar",
+data:{
+labels:labels,
+datasets:[{
+data:valores,
+backgroundColor:"#43d68c",
+borderRadius:6,
+maxBarThickness:24
+}]
+},
+options:{
+  maintainAspectRatio:false,
+plugins:{
+legend:{display:false}
+},
+scales:{
+x:{ticks:{color:"#aaa"}},
+y:{ticks:{color:"#aaa"}}
+}
+}
+})
 
 
 
+document.getElementById("modalInfo").classList.add("show")
+
+}
+
+
+function fecharInfo(){
+document.getElementById("modalInfo").classList.remove("show")
+}
 
 
 
+let clicksPage = 1
+const clicksPerPage = 5
+let allClicks = []
+
+function renderClicks(){
+
+const inicio = (clicksPage-1) * clicksPerPage
+const fim = inicio + clicksPerPage
+
+const pagina = allClicks.slice(inicio,fim)
+
+let html=""
+
+pagina.forEach(c=>{
+
+let dataClick = new Date(c.dt_criacao).toLocaleString()
+
+html+=`
+<tr>
+<td>${dataClick}</td>
+<td>${c.device || "-"}</td>
+</tr>
+`
+
+})
+
+document.getElementById("ultimosCliques").innerHTML = html
+
+const totalPaginas = Math.ceil(allClicks.length / clicksPerPage)
+
+document.getElementById("clickPageInfo").innerText =
+`Página ${clicksPage} de ${totalPaginas}`
+
+}
+
+
+document.getElementById("prevClicks").onclick=()=>{
+
+if(clicksPage>1){
+clicksPage--
+renderClicks()
+}
+
+}
+
+document.getElementById("nextClicks").onclick=()=>{
+
+const totalPaginas=Math.ceil(allClicks.length/clicksPerPage)
+
+if(clicksPage<totalPaginas){
+clicksPage++
+renderClicks()
+}
+
+}
 
 
 </script>
@@ -881,5 +1302,3 @@ async function getUsername() {
 
 </body>
 </html>
-
-
