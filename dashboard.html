@@ -136,6 +136,17 @@
       letter-spacing: 1px;
     }
 
+    .card-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card-icon {
+      font-size: 16px;
+    }
+
+
     .card-value {
       font-size: 28px;
       font-weight: 700;
@@ -502,29 +513,39 @@ td:last-child {
 
     <div class="cards">
       <div class="card">
-        <div class="card-title">Total de Pedidos</div>
+        <div class="card-title">
+      <span class="card-icon">📦</span>
+        Pedidos
+      </div>
+
         <div class="card-value" id="totalPedidos">--</div>
       </div>
 
      <div class="card">
-        <div class="card-title">Total de Itens Vendidos</div>
+        <div class="card-title">
+          <span class="card-icon">🛒</span>
+        Itens Vendidos
+      </div>
         <div class="card-value" id="itensVendidos">--</div>
       </div>
 
       <div class="card">
-        <div class="card-title">Total de Vendas</div>
+        <div class="card-title">
+        <span class="card-icon">💰</span>
+        Vendas
+      </div>
         <div class="card-value" id="totalVendas">--</div>
       </div>
 
       <div class="card">
-        <div class="card-title">Total de Comissão</div>
+        <div class="card-title">
+        <span class="card-icon">💸</span>
+        Comissão
+      </div>
         <div class="card-value" id="totalComissao">--</div>
       </div>
 
     </div>
-
-
-
 
 
 <div style="margin-top:40px;">
