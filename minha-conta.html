@@ -31,7 +31,7 @@ padding:0 28px;
 box-shadow:0 2px 12px rgba(0,0,0,0.45);
 }
 
-header img{height:150px}
+header img{height:34px}
 
 header button{
 background:none;
@@ -124,6 +124,11 @@ padding:10px;
 border-radius:8px;
 }
 
+input[readonly]{
+opacity:0.6;
+cursor:not-allowed;
+}
+
 button.save{
 background:#43d68c;
 border:none;
@@ -206,6 +211,14 @@ font-size:14px;
 
 <label>Username público</label>
 <input id="username">
+<div id="usernameWarning" style="
+color:#ff5c5c;
+font-size:13px;
+margin-top:6px;
+display:none;
+">
+Já existem links gerados com esse username. Para alterar, é necessário excluir os links.
+</div>
 
 <div class="preview">
 Seu link ficará:<br>
@@ -274,6 +287,8 @@ emailEl.innerText=currentUser.email
 createdEl.innerText=new Date(currentUser.created_at).toLocaleDateString()
 
 carregarUsuario()
+await verificarLinksUsuario()
+
 
 }
 
@@ -324,7 +339,8 @@ preview.innerText=`subidanalyzer.vercel.app/api/${u}/slug`
 
 saveBtn.onclick = async () => {
 
- const username = usernameInput.value.trim()
+ let username = usernameInput.value.trim()
+ 
 
  if(!username){
    showToast("Digite um username","error")
@@ -340,11 +356,13 @@ if(username.length < 3){
  showToast("Username precisa ter pelo menos 3 caracteres","error")
  return
 }
-
-if(!/^[a-z0-9]+$/.test(username)){
+username = username.toLowerCase()
+if(!/^[a-zA-Z0-9]+$/.test(username)){
  showToast("Use apenas letras e números","error")
  return
 }
+
+
 
  const { error } = await supabaseClient
    .from("usuario")
@@ -365,9 +383,32 @@ if(!/^[a-z0-9]+$/.test(username)){
  showToast("Username salvo com sucesso","success")
 }
 
+async function verificarLinksUsuario(){
+
+const { data, error } = await supabaseClient
+.from("links")
+.select("id")
+.eq("id_usuario", currentUser.id)
+.limit(1)
+
+if(error){
+console.log(error)
+return
+}
+
+if(data.length > 0){
+
+document.getElementById("username").readOnly = true
+
+document.getElementById("usernameWarning").style.display = "block"
+
+}
+
+}
+
+
 
 </script>
 
 </body>
 </html>
-
