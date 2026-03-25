@@ -2,6 +2,7 @@
 <html lang="pt-br"> 
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Shopee Commissions Analyzer</title>
   <link rel="icon" href="favicon.ico">
 
@@ -126,6 +127,18 @@
   filter: drop-shadow(0 4px 10px rgba(0,0,0,0.35));
 }
 
+@media (max-width: 768px) {
+
+  .login-box {
+    width: 100%;
+    padding: 20px;
+    border-radius: 16px;
+  }
+
+}
+
+
+
   </style>
 </head>
 
@@ -157,6 +170,7 @@
 
   <!-- SUPABASE SDK -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  
 
   <script>
     // 🔴 SUAS CREDENCIAIS (anon key pode ficar no front)
