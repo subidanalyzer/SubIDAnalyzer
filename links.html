@@ -31,7 +31,7 @@ padding:0 28px;
 box-shadow:0 2px 12px rgba(0,0,0,0.45);
 }
 
-header img { height: 70px; margin-top:10px; margin-left:-15px; }
+header img{height:34px}
 
 header button{
 background:none;
@@ -461,6 +461,31 @@ height:220px !important;
 }
 
 
+.scroll-verde{
+  overflow-y:auto;
+}
+
+.scroll-verde::-webkit-scrollbar{
+  width:8px;
+}
+
+.scroll-verde::-webkit-scrollbar-track{
+  background:transparent;
+}
+
+.scroll-verde::-webkit-scrollbar-thumb{
+  background:#22c55e;
+  border-radius:10px;
+  border:2px solid transparent;
+  background-clip:content-box;
+}
+
+.scroll-verde::-webkit-scrollbar-thumb:hover{
+  background:#16a34a;
+}
+
+
+
 
 
 </style>
@@ -601,7 +626,7 @@ Excluir
 <canvas id="clickChart"></canvas>
 </div>
 
-<div class="referer-area">
+<div class="referer-area scroll-verde">
 <h3>🔗 Origem dos cliques</h3>
 <div id="refererStats"></div>
 </div>
@@ -1302,5 +1327,3 @@ renderClicks()
 
 </body>
 </html>
-
-
