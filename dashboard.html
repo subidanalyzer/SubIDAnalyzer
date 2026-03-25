@@ -116,8 +116,9 @@
 
     .card {
   background: linear-gradient(145deg, #0f0f0f, #111111);
-  padding: 26px;
-  border-radius: 18px;
+  padding: 18px 20px;
+  border-radius: 14px;
+  min-height: 90px;
   box-shadow: 0 12px 35px rgba(0,0,0,0.45);
   transition: all 0.25s ease;
   border: 1px solid rgba(255,255,255,0.04);
@@ -156,7 +157,8 @@
 .filters {
   display: flex;
   gap: 20px;
-  margin-bottom: 30px;
+  margin-top: 50px !important;
+  margin-bottom: 0px;
 }
 
 .filter-group {
@@ -407,7 +409,7 @@ td:last-child {
   box-shadow: 0 8px 24px rgba(0,0,0,0.35);
   display: flex;
   flex-direction: column;
-  height: 300px;
+  height: 250px;
 }
 
 .resumo-title {
@@ -468,8 +470,119 @@ td:last-child {
 
 
 
+.topo-dashboard {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+
+.linha-topo {
+  display: grid;
+  grid-template-columns: max-content auto;
+  gap: 24px;
+  align-items: center;
+}
 
 
+/* FILTROS */
+.filters {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  font-size: 13px;
+}
+
+/* GRID DOS CARDS */
+.cards-resumo {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(220px, 1fr)) !important;
+  gap: 16px;
+  justify-self: start;
+  width: 490px;
+  max-width: 520px;
+}
+
+.filters {
+  display: flex;
+  gap: 16px;
+  margin-top: 0px;
+  position: relative;
+  top: -70px;
+  flex-wrap: wrap;
+}
+
+/* CARDS MAIS COMPACTOS */
+.cards-resumo .card {
+  padding: 14px 16px;
+  min-height: 80px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* TEXTO */
+.cards-resumo .card-title {
+  font-size: 11px;
+  margin-bottom: 4px;
+}
+
+.cards-resumo .card-value {
+  font-size: 24px;
+}
+
+
+.linha-topo {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 20px;
+  align-items: start;
+}
+
+.lado-direito {
+  display: flex;
+  gap: 18px;
+  align-items: stretch;
+}
+
+.cards-resumo {
+  display: grid;
+  grid-template-columns: repeat(2, 180px);
+  gap: 12px;
+}
+
+#boxInsights {
+  width: 800px;
+  min-height: 100%;
+}
+
+
+
+.insights-card {
+  max-height: 200px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.insights-content {
+  overflow-y: auto;
+  flex: 1;
+  padding-right: 6px;
+}
+
+.insights-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.insights-content::-webkit-scrollbar-thumb {
+  background: #00ff88;
+  border-radius: 10px;
+}
 
 
 
@@ -498,54 +611,85 @@ td:last-child {
     <div class="page-title">Dashboard</div>
     <div class="page-subtitle">Visão geral das suas comissões</div>
 
-    <div class="filters">
-        <div class="filter-group">
-            <label>Data Inicio</label>
-            <input type="date" id="dataInicial">
-        </div>
+<div class="topo-dashboard">
 
-        <div class="filter-group">
-            <label>Dada Fim</label>
-            <input type="date" id="dataFinal">
-        </div>
+  
+
+<div class="linha-topo">
+
+  <!-- ESQUERDA -->
+  <div class="filters">
+    <div class="filter-group">
+      <label>Data Início</label>
+      <input type="date" id="dataInicial">
     </div>
 
+    <div class="filter-group">
+      <label>Data Fim</label>
+      <input type="date" id="dataFinal">
+    </div>
+  </div>
 
-    <div class="cards">
+  <!-- DIREITA -->
+  <div class="lado-direito">
+
+    <!-- CARDS -->
+    <div class="cards-resumo">
+
       <div class="card">
         <div class="card-title">
-      <span class="card-icon">📦</span>
-        Pedidos
-      </div>
-
+          <span class="card-icon">📦</span>
+          Pedidos
+        </div>
         <div class="card-value" id="totalPedidos">--</div>
       </div>
 
-     <div class="card">
+      <div class="card">
         <div class="card-title">
           <span class="card-icon">🛒</span>
-        Itens Vendidos
-      </div>
+          Itens Vendidos
+        </div>
         <div class="card-value" id="itensVendidos">--</div>
       </div>
 
       <div class="card">
         <div class="card-title">
-        <span class="card-icon">💰</span>
-        Vendas
-      </div>
+          <span class="card-icon">💰</span>
+          Vendas
+        </div>
         <div class="card-value" id="totalVendas">--</div>
       </div>
 
       <div class="card">
         <div class="card-title">
-        <span class="card-icon">💸</span>
-        Comissão
-      </div>
+          <span class="card-icon">💸</span>
+          Comissão
+        </div>
         <div class="card-value" id="totalComissao">--</div>
       </div>
 
     </div>
+
+    <!-- 🔥 INSIGHTS -->
+    <div class="card insights-card" id="boxInsights" style="padding:16px;">
+      <div style="font-size:15px; color:#bdbdbd; margin-bottom:10px;">
+        📊 Insights do Período
+      </div>
+
+      <div class="insights-content" id="conteudoInsights" style="line-height:1.6; font-size:13px;">
+        Carregando insights...
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+
+
+
+</div>
+
 
 
 <div style="margin-top:40px;">
@@ -593,6 +737,19 @@ td:last-child {
 
 
 
+
+
+<div style="margin-top:40px;">
+  <div class="page-subtitle">📈 Vendas e Comissão por Dia</div>
+
+  <div class="card" style="padding:20px;">
+    <canvas id="graficoVendasComissao" height="100"></canvas>
+  </div>
+</div>
+
+
+
+
     
     <div style="margin-top:40px;">
       <div class="page-subtitle">Comissão por SubID (por dia)</div>
@@ -608,6 +765,7 @@ td:last-child {
 
 </div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 const supabaseUrl = "https://miudgbuwxwvszdunlifw.supabase.co"
 const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1pdWRnYnV3eHd2c3pkdW5saWZ3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk1NTMxODUsImV4cCI6MjA4NTEyOTE4NX0.WtelQveBTVlhR0BLb6ke9xb2i0a3ocfsPjKDupR1KRM"
@@ -646,6 +804,7 @@ async function carregarDashboard(dataInicial, dataFinal) {
 
   const { data: { user } } = await supabaseClient.auth.getUser();
 
+
   if (!user) {
     window.location.href = "index.html";
     return;
@@ -653,6 +812,7 @@ async function carregarDashboard(dataInicial, dataFinal) {
 
   const dataInicialISO = `${dataInicial}T00:00:00`;
   const dataFinalISO = `${dataFinal}T23:59:59`;
+  await carregarGrafico(dataInicialISO, dataFinalISO, user.id);
 
   const { data, error } = await supabaseClient.rpc("get_dashboard_resumo", {
      p_usuario: user.id,
@@ -937,12 +1097,273 @@ logoutBtn.onclick = async () => {
 
 // Inicializa
 inicializarDatas();
+
+
+let graficoLinha = null;
+
+
+async function carregarGrafico(dataInicialISO, dataFinalISO, userId) {
+
+  const { data, error } = await supabaseClient.rpc('get_dados_detalhados_periodo', {
+    p_user_id: userId,
+    p_data_inicio: dataInicialISO,
+    p_data_fim: dataFinalISO
+  });
+
+  if (error) {
+    console.error("Erro gráfico:", error);
+    return;
+  }
+
+  if (!data || !data.length) return;
+
+  // 🔥 AGRUPAR POR DIA
+  const mapa = {};
+
+  data.forEach(item => {
+    const dia = item.data;
+
+    if (!mapa[dia]) {
+      mapa[dia] = { vendas: 0, comissao: 0 };
+    }
+
+    mapa[dia].vendas += Number(item.vendas);
+    mapa[dia].comissao += Number(item.comissao);
+  });
+
+  const labels = Object.keys(mapa).sort().map(d =>
+    new Date(d + "T00:00:00").toLocaleDateString("pt-BR")
+  );
+
+  const vendas = Object.keys(mapa).sort().map(d => mapa[d].vendas);
+  const comissao = Object.keys(mapa).sort().map(d => mapa[d].comissao);
+
+  const maxComissao = Math.max(...comissao);
+
+  // 🔥 AGORA OS INSIGHTS FUNCIONAM
+  gerarInsights(labels, vendas, comissao, data);
+
+  const ctx = document.getElementById("graficoVendasComissao").getContext("2d");
+
+  if (graficoLinha) {
+    graficoLinha.destroy();
+  }
+
+  graficoLinha = new Chart(ctx, {
+    type: "line",
+    data: {
+      labels: labels,
+      datasets: [
+        {
+          label: "Vendas (R$)",
+          data: vendas,
+          borderColor: "#43d68c",
+          backgroundColor: "rgba(67,214,140,0.15)",
+          tension: 0.3,
+          fill: true
+        },
+        {
+          label: "Comissão (R$)",
+          data: comissao,
+          borderColor: "#22c55e",
+          backgroundColor: "rgba(34,197,94,0.15)",
+          tension: 0.3,
+          borderDash: [5, 5],
+          fill: true
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              return context.dataset.label + ": R$ " + context.raw.toLocaleString("pt-BR");
+            }
+          }
+        },
+        legend: {
+          labels: { color: "#fff" }
+        }
+      },
+      scales: {
+        x: {
+          ticks: { color: "#bdbdbd" },
+          grid: { color: "rgba(255,255,255,0.05)" }
+        },
+        y: {
+          ticks: {
+            color: "#bdbdbd",
+            callback: value => "R$ " + value
+          },
+          grid: { color: "rgba(255,255,255,0.05)" }
+        }
+      }
+    }
+  });
+}
+
+
+
+
+
+function gerarInsights(labels, vendas, comissao, dados) {
+
+  if (!labels.length) return;
+
+  // =========================
+  // 📅 MELHOR / PIOR DIA
+  // =========================
+  const maxComissao = Math.max(...comissao);
+  const minComissao = Math.min(...comissao);
+
+  const melhorDia = labels[comissao.indexOf(maxComissao)];
+  const piorDia = labels[comissao.indexOf(minComissao)];
+
+  // =========================
+  // 🔥 MELHOR SUBID
+  // =========================
+  const subMap = {};
+
+  dados.forEach(item => {
+    const sub = item.subid || "Sem SubID";
+    subMap[sub] = (subMap[sub] || 0) + Number(item.comissao || 0);
+  });
+
+  const melhorSub = Object.entries(subMap).sort((a,b)=>b[1]-a[1])[0];
+
+  // =========================
+  // 📢 MELHOR CANAL
+  // =========================
+  const canalMap = {};
+
+  dados.forEach(item => {
+    const canal = item.canal || "Outros";
+    canalMap[canal] = (canalMap[canal] || 0) + Number(item.comissao || 0);
+  });
+
+  const melhorCanal = Object.entries(canalMap).sort((a,b)=>b[1]-a[1])[0];
+
+  // =========================
+  // 📈 TENDÊNCIA
+  // =========================
+  const ultimos = comissao.slice(-5);
+  const anteriores = comissao.slice(-10, -5);
+
+  const mediaUltimos = ultimos.reduce((a,b)=>a+b,0) / ultimos.length || 0;
+  const mediaAnteriores = anteriores.reduce((a,b)=>a+b,0) / anteriores.length || 0;
+
+  let tendencia = "🟡 Estável";
+  let variacao = 0;
+
+  if (mediaAnteriores > 0) {
+    variacao = ((mediaUltimos - mediaAnteriores) / mediaAnteriores) * 100;
+  }
+
+  if (variacao > 10) tendencia = "🟢 Subindo";
+  if (variacao < -10) tendencia = "🔴 Caindo";
+
+  // =========================
+  // ⚠️ ALERTAS
+  // =========================
+  let alertas = [];
+
+  if (variacao < -20) {
+    alertas.push("🚨 Queda forte de performance");
+  }
+
+  if (maxComissao > 0 && (melhorSub[1] / maxComissao) > 0.7) {
+    alertas.push("⚠️ Dependência alta de um SubID");
+  }
+
+  if (minComissao < (maxComissao * 0.1)) {
+    alertas.push("📉 Dias com performance muito baixa");
+  }
+
+  // =========================
+  // 🚀 OPORTUNIDADES
+  // =========================
+  let oportunidades = [];
+
+  if (melhorCanal) {
+    oportunidades.push(`Escalar canal ${melhorCanal[0]}`);
+  }
+
+  if (melhorSub) {
+    oportunidades.push(`Duplicar estratégia do SubID ${melhorSub[0]}`);
+  }
+
+  // =========================
+  // 🤖 INSIGHT INTELIGENTE
+  // =========================
+  let insightTexto = "";
+
+  if (tendencia.includes("Subindo")) {
+    insightTexto = "Seu funil está ganhando tração. Aumentar investimento agora pode acelerar ainda mais os resultados.";
+  } 
+  else if (tendencia.includes("Caindo")) {
+    insightTexto = "Sua performance caiu. Revise criativos e fontes de tráfego imediatamente.";
+  } 
+  else {
+    insightTexto = "Seus resultados estão estáveis. Testes A/B podem destravar crescimento.";
+  }
+
+  // =========================
+  // 💥 RENDER PRO
+  // =========================
+  document.getElementById("conteudoInsights").innerHTML = `
+
+    <div style="margin-bottom:8px;">
+      🔥 <b>Melhor SubID:</b> ${melhorSub[0]}
+      <span style="color:#43d68c;">(R$ ${melhorSub[1].toFixed(2)})</span>
+    </div>
+
+    <div style="margin-bottom:8px;">
+      📢 <b>Melhor canal:</b> ${melhorCanal[0]}
+    </div>
+
+    <div style="margin-bottom:8px;">
+      📅 <b>Melhor dia:</b> ${melhorDia}
+    </div>
+
+    <div style="margin-bottom:8px;">
+      📈 <b>Tendência:</b> ${tendencia}
+      <span style="opacity:0.7;">(${variacao.toFixed(1)}%)</span>
+    </div>
+
+    ${alertas.length ? `
+      <div style="margin-bottom:10px; color:#ff6b6b;">
+        ${alertas.join("<br>")}
+      </div>
+    ` : ""}
+
+    <div style="margin-bottom:10px; color:#43d68c;">
+      🚀 ${oportunidades.join("<br>")}
+    </div>
+
+    <div style="
+      background: rgba(67,214,140,0.08);
+      padding:10px;
+      border-radius:10px;
+      border-left: 3px solid #43d68c;
+      font-size:12px;
+    ">
+      🤖 ${insightTexto}
+    </div>
+
+  `;
+}
+
+
+
+
+
 </script>
 
 
 </body>
 </html>
-
 
 
 
