@@ -55,11 +55,8 @@ export default async function handler(req, res) {
       .maybeSingle();
 
     // 🔥 se NÃO existir → cria
-          return res.status(200).json({
-  teste: existingUser
-});
     if (!existingUser) {
-const { error: insertError } = await supabase.from("usuario").insert({
+    const { error: insertError } = await supabase.from("usuario").insert({
   id_auth: userAuth.id,
   ds_email: email,
   ds_plano: "pro",
@@ -67,7 +64,9 @@ const { error: insertError } = await supabase.from("usuario").insert({
   dt_vencimento: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
   dt_primeira_assinatura: new Date()
 });
-
+          return res.status(200).json({
+  teste: insertError
+});
 if (insertError) {
   console.log("ERRO INSERT:", insertError);
 }
