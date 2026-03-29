@@ -56,14 +56,18 @@ export default async function handler(req, res) {
 
     // 🔥 se NÃO existir → cria
     if (!existingUser) {
-      await supabase.from("usuario").insert({
-        id_auth: userAuth.id,
-        ds_email: email,
-        ds_plano: "pro",
-        ie_situacao: "ativa",
-        dt_vencimento: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
-        dt_primeira_assinatura: new Date()
-      });
+const { error: insertError } = await supabase.from("usuario").insert({
+  id_auth: userAuth.id,
+  ds_email: email,
+  ds_plano: "pro",
+  ie_situacao: "ativa",
+  dt_vencimento: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+  dt_primeira_assinatura: new Date()
+});
+
+if (insertError) {
+  console.log("ERRO INSERT:", insertError);
+}
     } else {
       // 🔥 se já existe → atualiza plano
       await supabase.from("usuario").update({
