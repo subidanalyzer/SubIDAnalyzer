@@ -35,7 +35,9 @@ export default async function handler(req, res) {
 
     // 🔥 se NÃO existir → cria
     if (!userAuth) {
+      console.log("ANTES ENVIAR EMAIL");
       const { data, error } = await supabase.auth.admin.inviteUserByEmail(email);
+      console.log("DEPOIS ENVIAR EMAIL");
 
       if (error) {
         return res.status(400).json({ error: error.message })
@@ -43,10 +45,10 @@ export default async function handler(req, res) {
 
       userAuth = data.user;
     }
-
+    console.log("ANTES TIMEOUT"); 
     // ⏳ esperar o usuário existir no auth
     await new Promise(resolve => setTimeout(resolve, 2000));
-
+     console.log("DEPOIS TIMEOUT"); 
     // 🔎 verificar se já existe na tabela usuario
     const { data: existingUser } = await supabase
       .from("usuario")
@@ -55,6 +57,7 @@ export default async function handler(req, res) {
       .maybeSingle();
 
     // 🔥 se NÃO existir → cria
+    console.log("ANTES EXISTINGUSER"); 
     if (!existingUser) {
 const { error: insertError } = await supabase.from("usuario").insert({
   id_auth: userAuth.id,
