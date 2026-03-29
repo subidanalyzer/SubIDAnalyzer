@@ -44,6 +44,9 @@ export default async function handler(req, res) {
       userAuth = data.user;
     }
 
+    // ⏳ esperar o usuário existir no auth
+    await new Promise(resolve => setTimeout(resolve, 2000));
+
     // 🔎 verificar se já existe na tabela usuario
     const { data: existingUser } = await supabase
       .from("usuario")
