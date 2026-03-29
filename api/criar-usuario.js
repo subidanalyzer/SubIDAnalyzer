@@ -10,7 +10,9 @@ export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Método não permitido" })
   }
-
+  console.log("🔔 Webhook Kiwify recebido!");
+  console.log("Headers:", req.headers);
+  console.log("Body:", JSON.stringify(req.body, null, 2));
   try {
 
     const { token } = req.body;
