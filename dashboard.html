@@ -1117,6 +1117,35 @@ async function carregarGrafico(dataInicialISO, dataFinalISO, userId) {
 
   if (!data || !data.length) return;
 
+
+  //So trazer se tiver mais de 1 dia 
+// 🔥 VERIFICAR QUANTOS DIAS ÚNICOS EXISTEM
+const diasUnicos = [...new Set(data.map(item => item.data))];
+
+if (diasUnicos.length < 2) {
+
+  document.getElementById("graficoVendasComissao").style.display = "none";
+
+  let aviso = document.getElementById("avisoGrafico");
+
+  if (!aviso) {
+    aviso = document.createElement("div");
+    aviso.id = "avisoGrafico";
+    aviso.style.marginTop = "20px";
+    aviso.style.textAlign = "center";
+    aviso.style.color = "#9e9e9e";
+    aviso.innerText = "📉 Adicione mais dias no filtro para visualizar o gráfico";
+
+    document.getElementById("graficoVendasComissao").parentElement.appendChild(aviso);
+  }
+
+  return;
+}
+
+
+
+
+
   // 🔥 AGRUPAR POR DIA
   const mapa = {};
 
@@ -1144,6 +1173,15 @@ async function carregarGrafico(dataInicialISO, dataFinalISO, userId) {
   gerarInsights(labels, vendas, comissao, data);
 
   const ctx = document.getElementById("graficoVendasComissao").getContext("2d");
+
+
+
+  document.getElementById("graficoVendasComissao").style.display = "block";
+
+  const aviso = document.getElementById("avisoGrafico");
+  if (aviso) aviso.remove();
+
+
 
   if (graficoLinha) {
     graficoLinha.destroy();
@@ -1354,10 +1392,6 @@ function gerarInsights(labels, vendas, comissao, dados) {
 
   `;
 }
-
-
-
-
 
 </script>
 
