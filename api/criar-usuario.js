@@ -56,9 +56,9 @@ export default async function handler(req, res) {
 
     // 🔥 se NÃO existir → cria
           return res.status(200).json({
-  teste: "ANTES DO if (!existingUser)"
+  teste: existingUser
 });
-    if (!existingUse) {
+    if (!existingUser) {
 const { error: insertError } = await supabase.from("usuario").insert({
   id_auth: userAuth.id,
   ds_email: email,
