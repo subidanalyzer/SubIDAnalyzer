@@ -1,4 +1,5 @@
 import { createClient } from "@supabase/supabase-js"
+import crypto from "crypto";
 
 const supabase = createClient(
   process.env.SUPABASE_URL,
@@ -15,14 +16,34 @@ export default async function handler(req, res) {
   console.log("Body:", JSON.stringify(req.body, null, 2));
   try {
 
-    const { token } = req.body;
+    //const { token } = req.body;
 
-    if (token !== process.env.ADMIN_TOKEN) {
-        return res.status(401).json({ error: "Não autorizado" });
+    //if (token !== process.env.ADMIN_TOKEN) {
+    //    return res.status(401).json({ error: "Não autorizado" });
+    //}
+
+    // 1️⃣ Validação do webhook via assinatura HMAC
+    const payload = JSON.stringify(req.body);
+    const signature = req.headers["x-kiwify-signature"];
+    const secret = process.env.KIWIFY_SECRET;
+
+    const hash = crypto.createHmac("sha256", secret).update(payload).digest("hex");
+
+    if (hash !== signature) {
+      return res.status(401).json({ error: "Não autorizado" });
     }
 
+    // 2️⃣ Extraindo dados do JSON
+    const body = req.body;
+    const email = body.Customer.email;
+    const nomeUsuario = body.Customer.first_name || body.Customer.full_name || email.split("@")[0];
+    const kiwifyCustomer = body.Customer.id;
+    const kiwifySubscription = body.Subscription?.id || body.subscription_id || null;
+    const dtVencimento = body.Subscription?.next_payment ? new Date(body.Subscription.next_payment) : new Date(Date.now() + 30*24*60*60*1000);
+    const dtPrimeira = body.Subscription?.start_date ? new Date(body.Subscription.start_date) : new Date();
+
     // 🔥 pegar email do webhook OU manual
-    let email = req.body.email || req.body.customer?.email;
+    //let email = req.body.email || req.body.customer?.email;
 
     if (!email) {
       return res.status(400).json({ error: "Email obrigatório" })
@@ -60,26 +81,23 @@ export default async function handler(req, res) {
     if (!existingUser) {
     const nomeUsuario = email.split("@")[0];
     const { error: insertError } = await supabase.from("usuario").insert({
-  id_auth: userAuth.id,
-  ds_email: email,
-  nm_usuario: nomeUsuario,
-  ds_plano: "pro",
-  ie_situacao: "ativa",
-  dt_vencimento: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
-  dt_primeira_assinatura: new Date()
-});
-          return res.status(200).json({
-  teste: insertError
-});
-if (insertError) {
-  console.log("ERRO INSERT:", insertError);
-}
+          id_auth: userAuth.id,
+          ds_email: email,
+          nm_usuario: nomeUsuario,
+          ds_plano: "pro",
+          ie_situacao: "ativa",
+          dt_vencimento: dtVencimento,
+          dt_primeira_assinatura: dtPrimeira,
+          nr_kiwify_customer: kiwifyCustomer,
+          ne_kiwify_subscription: kiwifySubscription
+        });
+
     } else {
       // 🔥 se já existe → atualiza plano
       await supabase.from("usuario").update({
         ds_plano: "pro",
         ie_situacao: "ativa",
-        dt_vencimento: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+        dt_vencimento: dt_vencimento
       }).eq("ds_email", email);
     }
 
