@@ -13,6 +13,12 @@ export default async function handler(req, res) {
 
   try {
 
+    const { token } = req.body;
+
+    if (token !== process.env.ADMIN_TOKEN) {
+        return res.status(401).json({ error: "Não autorizado" });
+    }
+
     // 🔥 pegar email do webhook OU manual
     let email = req.body.email || req.body.customer?.email;
 
