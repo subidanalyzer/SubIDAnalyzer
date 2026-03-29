@@ -172,6 +172,63 @@ font-size:14px;
 .toast.success{border-left:4px solid #43d68c}
 .toast.error{border-left:4px solid #ff4d4f}
 
+
+
+.suporte-card {
+  margin-top: 24px;
+  max-width: 520px;
+}
+
+.suporte-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.suporte-title {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.suporte-text {
+  font-size: 13px;
+  color: #bdbdbd;
+  line-height: 1.6;
+}
+
+.highlight {
+  color: #43d68c;
+  font-weight: 500;
+}
+
+.instagram-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(67,214,140,0.08);
+  border: 1px solid rgba(67,214,140,0.2);
+  padding: 10px 12px;
+  border-radius: 10px;
+  width: fit-content;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.instagram-box img {
+  width: 18px;
+  height: 18px;
+}
+
+.instagram-box span {
+  color: #43d68c;
+  font-weight: 600;
+}
+
+.instagram-box:hover {
+  background: rgba(67,214,140,0.15);
+}
+
+
 </style>
 </head>
 
@@ -232,6 +289,34 @@ Salvar
 </button>
 
 </div>
+
+
+
+<div class="card suporte-card">
+  <div class="suporte-content">
+    
+    <div class="suporte-title">
+      💬 Fale com a gente
+    </div>
+
+    <div class="suporte-text">
+      Caso tenha dúvidas, sugestões ou críticas, entre em contato pelo email
+      <span class="highlight">subidanalyzer@gmail.com</span>
+      <br><br>
+      ou fale com a gente no Instagram:
+    </div>
+
+    <div class="instagram-box" onclick="window.open('https://instagram.com/SubIDAnalyzer','_blank')">
+      <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" alt="Instagram">
+      <span>@SubIDAnalyzer</span>
+    </div>
+  </div>
+</div>
+
+
+
+
+
 
 </main>
 
@@ -412,5 +497,4 @@ document.getElementById("usernameWarning").style.display = "block"
 
 </body>
 </html>
-
 
