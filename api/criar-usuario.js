@@ -7,10 +7,6 @@ const supabase = createClient(
 
 export default async function handler(req, res) {
 
-  return res.status(200).json({
-  teste: "CHEGOU NA NOVA VERSAO"
-});
-
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Método não permitido" })
   }
@@ -38,6 +34,10 @@ export default async function handler(req, res) {
     let userAuth = users.users.find(u => u.email === email);
 
     // 🔥 se NÃO existir → cria
+      return res.status(200).json({
+  teste: "ANTES DO if (!userAuth) {"
+});
+
     if (!userAuth) {
       console.log("ANTES ENVIAR EMAIL");
       const { data, error } = await supabase.auth.admin.inviteUserByEmail(email);
