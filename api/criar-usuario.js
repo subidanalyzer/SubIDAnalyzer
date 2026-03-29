@@ -56,9 +56,11 @@ export default async function handler(req, res) {
 
     // 🔥 se NÃO existir → cria
     if (!existingUser) {
+    const nomeUsuario = email.split("@")[0];
     const { error: insertError } = await supabase.from("usuario").insert({
   id_auth: userAuth.id,
   ds_email: email,
+  nm_usuario: nomeUsuario,
   ds_plano: "pro",
   ie_situacao: "ativa",
   dt_vencimento: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
