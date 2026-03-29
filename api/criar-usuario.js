@@ -7,6 +7,10 @@ const supabase = createClient(
 
 export default async function handler(req, res) {
 
+  return res.status(200).json({
+  teste: "CHEGOU NA NOVA VERSAO"
+});
+
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Método não permitido" })
   }
