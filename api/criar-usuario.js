@@ -13,31 +13,67 @@ export default async function handler(req, res) {
 
   try {
 
-    const { email, token } = req.body;
-
-    if (token !== process.env.ADMIN_TOKEN) {
-        return res.status(401).json({ error: "Não autorizado" });
-    }
+    // 🔥 pegar email do webhook OU manual
+    let email = req.body.email || req.body.customer?.email;
 
     if (!email) {
       return res.status(400).json({ error: "Email obrigatório" })
     }
 
-    const { data, error } = await supabase.auth.admin.inviteUserByEmail(email)
+    email = email.toLowerCase();
 
-    if (error) {
-      return res.status(400).json({ error: error.message })
+    // 🔎 verificar se já existe no AUTH
+    const { data: users } = await supabase.auth.admin.listUsers();
+
+    let userAuth = users.users.find(u => u.email === email);
+
+    // 🔥 se NÃO existir → cria
+    if (!userAuth) {
+      const { data, error } = await supabase.auth.admin.inviteUserByEmail(email);
+
+      if (error) {
+        return res.status(400).json({ error: error.message })
+      }
+
+      userAuth = data.user;
+    }
+
+    // 🔎 verificar se já existe na tabela usuario
+    const { data: existingUser } = await supabase
+      .from("usuario")
+      .select("id_auth")
+      .eq("ds_email", email)
+      .maybeSingle();
+
+    // 🔥 se NÃO existir → cria
+    if (!existingUser) {
+      await supabase.from("usuario").insert({
+        id_auth: userAuth.id,
+        ds_email: email,
+        ds_plano: "pro",
+        ie_situacao: "ativa",
+        dt_vencimento: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+        dt_primeira_assinatura: new Date()
+      });
+    } else {
+      // 🔥 se já existe → atualiza plano
+      await supabase.from("usuario").update({
+        ds_plano: "pro",
+        ie_situacao: "ativa",
+        dt_vencimento: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+      }).eq("ds_email", email);
     }
 
     return res.status(200).json({
       success: true,
-      message: "Convite enviado"
+      message: "Usuário processado com sucesso"
     })
 
   } catch (err) {
 
     return res.status(500).json({
-      error: "Erro interno"
+      error: "Erro interno",
+      details: err.message
     })
 
   }
