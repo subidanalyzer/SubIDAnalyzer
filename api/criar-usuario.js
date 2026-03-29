@@ -34,14 +34,8 @@ export default async function handler(req, res) {
     let userAuth = users.users.find(u => u.email === email);
 
     // 🔥 se NÃO existir → cria
-      return res.status(200).json({
-  teste: "ANTES DO if (!userAuth) {"
-});
-
     if (!userAuth) {
-      console.log("ANTES ENVIAR EMAIL");
       const { data, error } = await supabase.auth.admin.inviteUserByEmail(email);
-      console.log("DEPOIS ENVIAR EMAIL");
 
       if (error) {
         return res.status(400).json({ error: error.message })
@@ -49,7 +43,9 @@ export default async function handler(req, res) {
 
       userAuth = data.user;
     }
-    console.log("ANTES TIMEOUT"); 
+          return res.status(200).json({
+  teste: "ANTES DO esperar o usuário existir no auth"
+});
     // ⏳ esperar o usuário existir no auth
     await new Promise(resolve => setTimeout(resolve, 2000));
      console.log("DEPOIS TIMEOUT"); 
