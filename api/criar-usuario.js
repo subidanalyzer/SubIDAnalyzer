@@ -28,7 +28,8 @@ export default async function handler(req, res) {
     const secret = process.env.KIWIFY_SECRET;
 
     const hash = crypto.createHmac("sha256", secret).update(payload).digest("hex");
-
+    console.log("hash:", hash);
+    console.log("signature:", signature);
     //if (hash !== signature) {
     //  return res.status(401).json({ error: "Não autorizado" });
     //}
@@ -44,7 +45,7 @@ export default async function handler(req, res) {
 
     // 🔥 pegar email do webhook OU manual
     //let email = req.body.email || req.body.customer?.email;
-
+    console.log("email:", email);
     if (!email) {
       return res.status(400).json({ error: "Email obrigatório" })
     }
@@ -55,18 +56,18 @@ export default async function handler(req, res) {
     const { data: users } = await supabase.auth.admin.listUsers();
 
     let userAuth = users.users.find(u => u.email === email);
-
+    console.log("userAuth:", userAuth);
     // 🔥 se NÃO existir → cria
     if (!userAuth) {
       const { data, error } = await supabase.auth.admin.inviteUserByEmail(email);
-
+      console.log("error:", error);
       if (error) {
         return res.status(400).json({ error: error.message })
       }
 
       userAuth = data.user;
     }
-
+    console.log("userAuth:", userAuth);
     // ⏳ esperar o usuário existir no auth
     await new Promise(resolve => setTimeout(resolve, 2000));
 
@@ -76,7 +77,7 @@ export default async function handler(req, res) {
       .select("id_auth")
       .eq("ds_email", email)
       .maybeSingle();
-
+    console.log("existingUser:", existingUser);
     // 🔥 se NÃO existir → cria
     if (!existingUser) {
     const nomeUsuario = email.split("@")[0];
@@ -94,6 +95,7 @@ export default async function handler(req, res) {
 
     } else {
       // 🔥 se já existe → atualiza plano
+      console.log("email:", email);
       await supabase.from("usuario").update({
         ds_plano: "pro",
         ie_situacao: "ativa",
