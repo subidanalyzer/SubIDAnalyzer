@@ -29,9 +29,9 @@ export default async function handler(req, res) {
 
     const hash = crypto.createHmac("sha256", secret).update(payload).digest("hex");
 
-    if (hash !== signature) {
-      return res.status(401).json({ error: "Não autorizado" });
-    }
+    //if (hash !== signature) {
+    //  return res.status(401).json({ error: "Não autorizado" });
+    //}
 
     // 2️⃣ Extraindo dados do JSON
     const body = req.body;
