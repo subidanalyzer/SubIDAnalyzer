@@ -37,7 +37,7 @@ export default async function handler(req, res) {
     // 2️⃣ Extraindo dados do JSON
     const body = req.body;
     let email = body.Customer.email;
-    const nomeUsuario = body.Customer.first_name || body.Customer.full_name || email.split("@")[0];
+    let nomeUsuario = body.Customer.first_name || body.Customer.full_name || email.split("@")[0];
     const kiwifyCustomer = body.Customer.id;
     const kiwifySubscription = body.Subscription?.id || body.subscription_id || null;
     const dtVencimento = body.Subscription?.next_payment ? new Date(body.Subscription.next_payment) : new Date(Date.now() + 30*24*60*60*1000);
@@ -85,7 +85,7 @@ export default async function handler(req, res) {
     console.log("existingUser:", existingUser);
     // 🔥 se NÃO existir → cria
     if (!existingUser) {
-    const nomeUsuario = email.split("@")[0];
+    nomeUsuario = email.split("@")[0];
     const { error: insertError } = await supabase.from("usuario").insert({
           id_auth: userAuth.id,
           ds_email: email,
