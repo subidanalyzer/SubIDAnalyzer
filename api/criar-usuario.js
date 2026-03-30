@@ -36,7 +36,7 @@ export default async function handler(req, res) {
 
     // 2️⃣ Extraindo dados do JSON
     const body = req.body;
-    const email = body.Customer.email;
+    let email = body.Customer.email;
     const nomeUsuario = body.Customer.first_name || body.Customer.full_name || email.split("@")[0];
     const kiwifyCustomer = body.Customer.id;
     const kiwifySubscription = body.Subscription?.id || body.subscription_id || null;
