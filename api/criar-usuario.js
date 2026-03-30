@@ -106,7 +106,7 @@ export default async function handler(req, res) {
       await supabase.from("usuario").update({
         ds_plano: "pro",
         ie_situacao: "ativa",
-        dt_vencimento: dt_vencimento
+        dt_vencimento: dtVencimento,
       }).eq("ds_email", email);
     }
 
