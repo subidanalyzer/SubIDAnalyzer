@@ -55,6 +55,10 @@ export default async function handler(req, res) {
     // 🔎 verificar se já existe no AUTH
     const { data: users } = await supabase.auth.admin.listUsers();
     console.log("data: users:", email);
+    if (email.includes("@example.com")) {
+      email = `subidanalyzer@gmail.com`;
+    }
+    console.log("email:", email);
     let userAuth = users.users.find(u => u.email === email);
     console.log("userAuth:", userAuth);
     // 🔥 se NÃO existir → cria
