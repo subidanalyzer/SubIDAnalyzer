@@ -96,7 +96,7 @@ export default async function handler(req, res) {
           dt_vencimento: dtVencimento,
           dt_primeira_assinatura: dtPrimeira,
           nr_kiwify_customer: kiwifyCustomer,
-          ne_kiwify_subscription: kiwifySubscription
+          nr_kiwify_subscription: kiwifySubscription
         });
     console.log("💾 INSERT DATA:", data);
     console.log("💥 INSERT ERROR:", insertError);
