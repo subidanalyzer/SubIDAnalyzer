@@ -49,12 +49,12 @@ export default async function handler(req, res) {
     if (!email) {
       return res.status(400).json({ error: "Email obrigatório" })
     }
-
+    console.log("email1:", email);
     email = email.toLowerCase();
-
+    console.log("email2:", email);
     // 🔎 verificar se já existe no AUTH
     const { data: users } = await supabase.auth.admin.listUsers();
-
+    console.log("data: users:", email);
     let userAuth = users.users.find(u => u.email === email);
     console.log("userAuth:", userAuth);
     // 🔥 se NÃO existir → cria
