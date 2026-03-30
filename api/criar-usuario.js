@@ -86,6 +86,7 @@ export default async function handler(req, res) {
     // 🔥 se NÃO existir → cria
     if (!existingUser) {
     nomeUsuario = email.split("@")[0];
+    console.log("nomeUsuario:", nomeUsuario);
     const { error: insertError } = await supabase.from("usuario").insert({
           id_auth: userAuth.id,
           ds_email: email,
