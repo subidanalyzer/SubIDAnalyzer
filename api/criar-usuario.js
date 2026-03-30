@@ -87,7 +87,7 @@ export default async function handler(req, res) {
     if (!existingUser) {
     nomeUsuario = email.split("@")[0];
     console.log("nomeUsuario:", nomeUsuario);
-    const { error: insertError } = await supabase.from("usuario").insert({
+    const { data, error: insertError } = await supabase.from("usuario").insert({
           id_auth: userAuth.id,
           ds_email: email,
           nm_usuario: nomeUsuario,
@@ -98,7 +98,8 @@ export default async function handler(req, res) {
           nr_kiwify_customer: kiwifyCustomer,
           ne_kiwify_subscription: kiwifySubscription
         });
-
+    console.log("💾 INSERT DATA:", data);
+    console.log("💥 INSERT ERROR:", insertError);
     } else {
       // 🔥 se já existe → atualiza plano
       console.log("email:", email);
