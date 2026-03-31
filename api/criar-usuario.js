@@ -42,6 +42,10 @@ export default async function handler(req, res) {
     const kiwifySubscription = body.Subscription?.id || body.subscription_id || null;
     const dtVencimento = body.Subscription?.next_payment ? new Date(body.Subscription.next_payment) : new Date(Date.now() + 30*24*60*60*1000);
     const dtPrimeira = body.Subscription?.start_date ? new Date(body.Subscription.start_date) : new Date();
+    const orderId = body.order_id;
+    const statusPedido = body.order_status;
+    const eventoKiwify = body.webhook_event_type;
+    const statusAssinatura = body.Subscription?.status || null;
 
     // 🔥 pegar email do webhook OU manual
     //let email = req.body.email || req.body.customer?.email;
@@ -96,7 +100,11 @@ export default async function handler(req, res) {
           dt_vencimento: dtVencimento,
           dt_primeira_assinatura: dtPrimeira,
           nr_kiwify_customer: kiwifyCustomer,
-          nr_kiwify_subscription: kiwifySubscription
+          nr_kiwify_subscription: kiwifySubscription,
+          nr_kiwify_order: orderId,
+          ds_status_pedido: statusPedido,
+          ds_evento_kiwify: eventoKiwify,
+          ds_status_assinatura: statusAssinatura
         });
     console.log("💾 INSERT DATA:", data);
     console.log("💥 INSERT ERROR:", insertError);
@@ -107,6 +115,12 @@ export default async function handler(req, res) {
         ds_plano: "pro",
         ie_situacao: "ativa",
         dt_vencimento: dtVencimento,
+        nr_kiwify_subscription: kiwifySubscription,
+        nr_kiwify_customer: kiwifyCustomer,
+        nr_kiwify_order: orderId,
+        ds_status_pedido: statusPedido,
+        ds_evento_kiwify: eventoKiwify,
+        ds_status_assinatura: statusAssinatura
       }).eq("ds_email", email);
     }
 
