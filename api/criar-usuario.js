@@ -49,6 +49,14 @@ export default async function handler(req, res) {
     const telefone = body.Customer.mobile || null;
     const nomePessoa = body.Customer.full_name || null;
     const cpf = body.Customer.CPF || null;
+    const instagram = body.Customer.instagram || null;
+    const ds_rua = body.Customer.street || null;
+    const nr_numero = body.Customer.number || null;
+    const ds_bairro = body.Customer.neighborhood || null;
+    const ds_cidade = body.Customer.city || null;
+    const ds_uf = body.Customer.state || null;
+    const cd_cep = body.Customer.zipcode || null;
+
 
     // 🔥 pegar email do webhook OU manual
     //let email = req.body.email || req.body.customer?.email;
@@ -110,7 +118,14 @@ export default async function handler(req, res) {
           ds_status_assinatura: statusAssinatura,
           nr_telefone: telefone,
           nm_pessoa: nomePessoa,
-          nr_cpf: cpf
+          nr_cpf: cpf,
+          ds_instagram: instagram,
+          ds_rua: ds_rua,
+          nr_numero: nr_numero,
+          ds_bairro: ds_bairro,
+          ds_cidade: ds_cidade,
+          ds_uf: ds_uf,
+          cd_cep: cd_cep
         });
     console.log("💾 INSERT DATA:", data);
     console.log("💥 INSERT ERROR:", insertError);
