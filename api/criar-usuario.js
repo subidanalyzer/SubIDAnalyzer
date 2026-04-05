@@ -46,6 +46,9 @@ export default async function handler(req, res) {
     const statusPedido = body.order_status;
     const eventoKiwify = body.webhook_event_type;
     const statusAssinatura = body.Subscription?.status || null;
+    const telefone = body.Customer.mobile || null;
+    const nomePessoa = body.Customer.full_name || null;
+    const cpf = body.Customer.CPF || null;
 
     // 🔥 pegar email do webhook OU manual
     //let email = req.body.email || req.body.customer?.email;
@@ -104,7 +107,10 @@ export default async function handler(req, res) {
           nr_kiwify_order: orderId,
           ds_status_pedido: statusPedido,
           ds_evento_kiwify: eventoKiwify,
-          ds_status_assinatura: statusAssinatura
+          ds_status_assinatura: statusAssinatura,
+          nr_telefone: telefone,
+          nm_pessoa: nomePessoa,
+          nr_cpf: cpf
         });
     console.log("💾 INSERT DATA:", data);
     console.log("💥 INSERT ERROR:", insertError);
@@ -120,7 +126,10 @@ export default async function handler(req, res) {
         nr_kiwify_order: orderId,
         ds_status_pedido: statusPedido,
         ds_evento_kiwify: eventoKiwify,
-        ds_status_assinatura: statusAssinatura
+        ds_status_assinatura: statusAssinatura,
+        nr_telefone: telefone,
+        nm_pessoa: nomePessoa,
+        nr_cpf: cpf
       }).eq("ds_email", email);
     }
 
