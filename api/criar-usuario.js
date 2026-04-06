@@ -56,6 +56,7 @@ export default async function handler(req, res) {
     const ds_cidade = body.Customer.city || null;
     const ds_uf = body.Customer.state || null;
     const cd_cep = body.Customer.zipcode || null;
+    const refundedAt = body.refunded_at ? new Date(body.refunded_at) : null;
 
 
     // 🔥 pegar email do webhook OU manual
@@ -99,7 +100,7 @@ export default async function handler(req, res) {
       .maybeSingle();
     console.log("existingUser:", existingUser);
     // 🔥 se NÃO existir → cria
-    if (!existingUser) {
+    if (!existingUser && eventoKiwify === "order_approved") {
     nomeUsuario = email.split("@")[0];
     console.log("nomeUsuario:", nomeUsuario);
     const { data, error: insertError } = await supabase.from("usuario").insert({
@@ -130,11 +131,36 @@ export default async function handler(req, res) {
     console.log("💾 INSERT DATA:", data);
     console.log("💥 INSERT ERROR:", insertError);
     } else {
+      
+      let ie_situacao = "ativa";
+      
+      if (eventoKiwify === "order_refunded" || eventoKiwify === "subscription_canceled") {
+        ie_situacao = "inativa";  
+        
+        //Banir o usuario para nao conseguir logar mais, devido ter pedido reembolso. 
+        await supabase.auth.admin.updateUserById(userAuth.id, {
+          ban_duration: "876600h"
+        });
+      }
+
+      if (eventoKiwify === "subscription_late") {
+        ie_situacao = "inadimplente";  
+      }
+
+      if (eventoKiwify === "subscription_renewed") {
+        ie_situacao = "ativa";
+        // Desbanir no Auth caso estivesse banido
+        await supabase.auth.admin.updateUserById(userAuth.id, {
+          ban_duration: "none"
+        });
+      }
+
+
       // 🔥 se já existe → atualiza plano
       console.log("email:", email);
       await supabase.from("usuario").update({
         ds_plano: "pro",
-        ie_situacao: "ativa",
+        ie_situacao: ie_situacao,
         dt_vencimento: dtVencimento,
         nr_kiwify_subscription: kiwifySubscription,
         nr_kiwify_customer: kiwifyCustomer,
@@ -144,7 +170,8 @@ export default async function handler(req, res) {
         ds_status_assinatura: statusAssinatura,
         nr_telefone: telefone,
         nm_pessoa: nomePessoa,
-        nr_cpf: cpf
+        nr_cpf: cpf,
+        dt_reembolso: refundedAt
       }).eq("ds_email", email);
     }
 
