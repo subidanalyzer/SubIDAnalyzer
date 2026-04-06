@@ -14,20 +14,11 @@ export default async function handler(req, res) {
   console.log("🔔 Webhook Kiwify recebido!");
   console.log("Headers:", req.headers);
   console.log("Body:", JSON.stringify(req.body, null, 2));
-  console.log("Query params:", JSON.stringify(req.query, null, 2));
-  console.log("Body completo:", JSON.stringify(req.body, null, 2));
   try {
 
-    // 1️⃣ Validação do webhook via assinatura HMAC
-    const payload = JSON.stringify(req.body);
-    const signature = req.headers["x-kiwify-signature"];
-    const secret = process.env.KIWIFY_SECRET;
-
-    const hash = crypto.createHmac("sha256", secret).update(payload).digest("hex");
-    console.log("hash:", hash);
-    console.log("signature:", signature);
-    console.log("Headers completos:", JSON.stringify(req.headers, null, 2));
-    if (hash !== signature) {
+    // 1️⃣ Validação do webhook 
+    const { signature } = req.query;
+    if (signature !== process.env.KIWIFY_TOKEN) {
       return res.status(401).json({ error: "Não autorizado" });
     }
 
