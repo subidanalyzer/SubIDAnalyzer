@@ -24,6 +24,7 @@ export default async function handler(req, res) {
     const hash = crypto.createHmac("sha256", secret).update(payload).digest("hex");
     console.log("hash:", hash);
     console.log("signature:", signature);
+    console.log("Headers completos:", JSON.stringify(req.headers, null, 2));
     if (hash !== signature) {
       return res.status(401).json({ error: "Não autorizado" });
     }
