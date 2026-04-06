@@ -18,9 +18,13 @@ export default async function handler(req, res) {
 
     // 1️⃣ Validação do webhook 
     const { signature } = req.query;
+    const payload = JSON.stringify(req.body);
+    const hash = crypto.createHmac("sha1", process.env.KIWIFY_TOKEN)
+       .update(payload)
+       .digest("hex");
     console.log("signature:", signature);
     console.log("process.env.KIWIFY_TOKEN:", process.env.KIWIFY_TOKEN);
-    if (signature !== process.env.KIWIFY_TOKEN) {
+    if (hash !== signature) {
       console.log("DENTRO IF");
       return res.status(401).json({ error: "Não autorizado" });
     }
