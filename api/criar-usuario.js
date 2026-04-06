@@ -16,12 +16,6 @@ export default async function handler(req, res) {
   console.log("Body:", JSON.stringify(req.body, null, 2));
   try {
 
-    //const { token } = req.body;
-
-    //if (token !== process.env.ADMIN_TOKEN) {
-    //    return res.status(401).json({ error: "Não autorizado" });
-    //}
-
     // 1️⃣ Validação do webhook via assinatura HMAC
     const payload = JSON.stringify(req.body);
     const signature = req.headers["x-kiwify-signature"];
@@ -30,9 +24,9 @@ export default async function handler(req, res) {
     const hash = crypto.createHmac("sha256", secret).update(payload).digest("hex");
     console.log("hash:", hash);
     console.log("signature:", signature);
-    //if (hash !== signature) {
-    //  return res.status(401).json({ error: "Não autorizado" });
-    //}
+    if (hash !== signature) {
+      return res.status(401).json({ error: "Não autorizado" });
+    }
 
     // 2️⃣ Extraindo dados do JSON
     const body = req.body;
